@@ -1,0 +1,36 @@
+{
+  "name": "node-data-editor",
+  "version": "1.0.0",
+  "description": "a customizable data editor for node",
+  "main": "index.js",
+  "scripts": {
+    "dev": "npx ts-node-dev index.dev.ts -- -dev",
+    "test": "npx tsc && npx mocha test/*.spec.js",
+    "build": "npx tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lutzer/node-data-editor.git"
+  },
+  "author": "Lutz Reiter",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/lutzer/node-data-editor/issues"
+  },
+  "homepage": "https://github.com/lutzer/node-data-editor#readme",
+  "devDependencies": {
+    "@types/axios": "^0.14.0",
+    "@types/koa": "^2.11.6",
+    "@types/node": "^14.14.2",
+    "chai": "^4.2.0",
+    "mocha": "^8.2.0",
+    "nock": "^13.0.4",
+    "ts-node-dev": "^1.0.0",
+    "typescript": "^4.0.3"
+  },
+  "dependencies": {
+    "axios": "^0.20.0",
+    "koa": "^2.13.0",
+    "lodash": "^4.17.20"
+  }
+}

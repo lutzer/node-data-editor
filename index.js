@@ -1,0 +1,1 @@
+// const { startServer, config } = require('./dist/app')
