@@ -8,7 +8,6 @@ chai.use(chaiAsPromised)
 
 const { RestAdapter } = require('./../dist/adapter')
 const { DataModel } = require('./../dist/model');
-const { SSL_OP_EPHEMERAL_RSA } = require('constants');
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -24,10 +23,10 @@ describe('DataModel Tests', () => {
   }
 
   it('should create data model', async () => {
-    const model = new DataModel({
+    const model = new DataModel({ schema: {
       id: { type: 'number'},
       text: { type : 'string'}
-    },new RestAdapter(apiAddress))
+    }, adapter: new RestAdapter(apiAddress)})
   });
 
   it('should fetch data from api', async () => {

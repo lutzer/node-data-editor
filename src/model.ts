@@ -1,63 +1,57 @@
 import { Adapter } from "./adapter"
 import _ from 'lodash'
-
-enum DataType {
-  string = 'string', 
-  number = 'number', 
-  boolean = 'boolean', 
-  object = 'object', 
-  array = 'array'
-}
+import { DataSchema, Validator } from "./schema"
 
 enum Operation {
   create, change, delete
 }
 
-type DataSchema = { [id : string] : { 
-  type : DataType
-}}
-
 class DataModel {
 
-  schema : DataSchema
   adapter : Adapter
+  validator : Validator
 
   private _changedDataEntries : { id: string, op: Operation }[]
-  data : object[]
+  private _data : object[]
   key : string
 
   constructor({schema, adapter, key = 'id'} : {schema : DataSchema, adapter : Adapter, key? : string}) {
-    this.schema = schema
+    this.validator = new Validator(schema)
     this.adapter = adapter
     this.key = key
-    this.data = []
+    this._data = []
     this._changedDataEntries = []
   }
 
+  get data() : object[] {
+    return _.cloneDeep(this._data)
+  }
+
   get(id : string) {
-    return this.data.find((ele) => {
+    return this._data.find((ele) => {
       return _.isEqual(ele[this.key], id)
     })
   }
 
   set(id : string, data : object) {
-    const index = this.data.findIndex( (ele) => _.isEqual(ele[this.key], id) )
+    data = this.validator.test(data)
+    const index = this._data.findIndex( (ele) => _.isEqual(ele[this.key], id) )
     if (index >= 0) {
-      this.data[index] = Object.assign({}, this.data[index], data)
+      this._data[index] = Object.assign({}, this._data[index], data)
       this._changedDataEntries.push({id : id, op: Operation.change})
     } else {
-      this.data.push(data)
+      this._data.push(data)
       this._changedDataEntries.push({id : data[this.key], op: Operation.create})
     }
   }
 
   delete(id : string) {
-    this.data = this.data.filter( (ele) => !_.isEqual(ele[this.key], id))
+    this._data = this._data.filter( (ele) => !_.isEqual(ele[this.key], id))
     this._changedDataEntries.push({id : id, op: Operation.delete})
   }
 
   async fetch(id : string = null) {
-    this.data = await this.adapter.list()
+    this._data = await this.adapter.list()
     this._changedDataEntries = []
   }
 
@@ -79,4 +73,4 @@ class DataModel {
   // }
 }
 
-export { DataModel, DataType }
+export { DataModel }
