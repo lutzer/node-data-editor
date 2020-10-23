@@ -4,13 +4,17 @@ import { startServer } from './src/server'
 
 const port = 3001
 
-const adapter = new RestAdapter('/api/test')
-
-const Book = new DataModel({
-  id : { type : DataType.number },
-  text : { type : DataType.string }
-}, adapter)
-
-startServer(port).then( (server) => {
+startServer(port).then( async (server) => {
   console.info("Server listening on port " + port )
+
+  const book = new DataModel({
+    id : { type : DataType.number },
+    text : { type : DataType.string }
+  }, new RestAdapter('/api/test'))
+
+  try {
+    await book.fetch()
+  } catch (err) {
+    console.log(err)
+  }
 })

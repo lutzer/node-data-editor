@@ -21,8 +21,10 @@
   "devDependencies": {
     "@types/axios": "^0.14.0",
     "@types/koa": "^2.11.6",
+    "@types/lodash": "^4.14.162",
     "@types/node": "^14.14.2",
     "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
     "mocha": "^8.2.0",
     "nock": "^13.0.4",
     "ts-node-dev": "^1.0.0",
