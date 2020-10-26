@@ -9,8 +9,11 @@ describe('Schema Tests', () => {
 
   it('should create a correct validator', async () => {
     const schema = {
-      id: { type: 'number', default: 0},
-      text: { type : 'string', required : true, default: 'nothing' }
+      title: 'test',
+      properties: {
+        id: { type: 'number', default: 0},
+        text: { type : 'string', required : true, default: 'nothing' }
+      }
     }
     const validator = new Validator(schema)
     expect(validator.schema).to.deep.equal(schema)
@@ -18,35 +21,48 @@ describe('Schema Tests', () => {
 
   it('should not create a validator with invalid type', async () => {
     const schema = {
-      id: { type: 'horse'},
-      text: { type : 'string'}
+      title: 'test',
+      properties: {
+        id: { type: 'horse'},
+        text: { type : 'string'}
+      }
     }
     expect(() => {new Validator(schema)}).to.throw()
   });
 
   it('should not create a validator with invalid required value', async () => {
     const schema = {
-      id: { type: 'number', required: 'no' },
-      text: { type : 'string'}
+      title: 'test',
+      properties: {
+        id: { type: 'number'},
+        text: { type : 'string'}
+      },
+      required: ['no'] 
     }
     expect(() => {new Validator(schema)}).to.throw()
   });
 
   it('should not create a validator with invalid default value', async () => {
     const schema = {
-      id: { type: 'number', default: 'peter' },
-      text: { type : 'string'}
+      title: 'test',
+      properties: {
+        id: { type: 'number', default: 'peter' },
+        text: { type : 'string'}
+      }
     }
     expect(() => {new Validator(schema)}).to.throw()
   });
 
   it('should validate correct schema', async () => {
     const schema = {
-      id: { type: 'number' },
-      text: { type: 'string' },
-      object : { type: 'object' },
-      array : { type: 'array' },
-      boolean : { type: 'boolean' }
+      title: 'test',
+      properties: {
+        id: { type: 'number' },
+        text: { type: 'string' },
+        object : { type: 'object' },
+        array : { type: 'array' },
+        boolean : { type: 'boolean' }
+      }
     }
     const data = {
       id : 0,
@@ -62,7 +78,10 @@ describe('Schema Tests', () => {
 
   it('should throw error on validating incorrect schema', async () => {
     const schema = {
-      id: { type: 'number' }
+      title: 'test',
+      properties: {
+        id: { type: 'number' }
+      }
     }
     const validator = new Validator(schema)
     expect( () => validator.test({ id : 'ouch'}) ).to.throw()
@@ -70,21 +89,41 @@ describe('Schema Tests', () => {
 
   it('validation should throw error if required value is not supplied', async () => {
     const schema = {
-      id: { type: 'number' },
-      text: { type: 'string', required : true },
+      title: 'test',
+      properties: {
+        id: { type: 'number' },
+        text: { type: 'string' }
+      },
+      required : ['text']
     }
     const validator = new Validator(schema)
     expect( () => validator.test({ id : 0}) ).to.throw()
   });
 
-  it('validation should set default value if its not supplied', async () => {
+  it('validation should set default value if its not supplied for string', async () => {
     const schema = {
-      id: { type: 'number' },
-      text: { type: 'string', default : 'test' },
+      title: 'test',
+      properties: {
+        id: { type: 'number' },
+        text: { type: 'string', default : 'test' }
+      }
     }
     const validator = new Validator(schema)
-    const result = validator.test()
+    const result = validator.test({id : 3})
     expect(result.text).to.be.equal('test')
+  });
+
+  it('validation should set default value if its not supplied for array', async () => {
+    const schema = {
+      title: 'test',
+      properties: {
+        id: { type: 'number' },
+        list: { type: 'array', default : [1,2,3] }
+      }
+    }
+    const validator = new Validator(schema)
+    const result = validator.test({id : 3})
+    expect(result.list).to.deep.equal([1,2,3])
   });
 
 }); 

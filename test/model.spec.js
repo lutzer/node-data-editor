@@ -6,28 +6,132 @@ const _ = require('lodash')
 const expect = chai.expect
 chai.use(chaiAsPromised)
 
-const { RestAdapter } = require('./../dist/adapter')
+const { RestAdapter, Adapter } = require('./../dist/adapter')
 const { DataModel } = require('./../dist/model');
+const { create } = require('lodash');
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-describe('DataModel Tests', () => {
-
-  const apiAddress = 'http://test.com/api'
-  const apiData = [ { id: 0, text: 'test1'}, {id: 1, text: 'test2' }, {id: 2, text: 'test3'} ] 
-  const schema = {
+const apiAddress = 'http://test.com/api'
+const apiData = [ { id: 0, text: 'test1'}, {id: 1, text: 'test2' }, {id: 2, text: 'test3'} ] 
+const schema = {
+  title : 'testData',
+  properties: {
     id: { type: 'number'},
     text: { type : 'string'}
   }
+}
 
+describe('DataModel Tests', () => {
+
+  class TestAdapter extends Adapter {
+
+    constructor() {
+      super()
+      this.data = [
+        { id: 0, text: 'foo'},
+        { id: 1, text: 'foo'},
+        { id: 2, text: 'foo'},
+      ]
+    }
+  
+    async list() {
+      return this.data
+    }
+  
+    async get(id) {
+      return this.data.find( (ele) => ele.id == id )
+    }
+  
+    async delete(id) {
+      this.data = this.data.filter( (ele) => ele.id != id)
+    }
+  
+    async create(data) {
+      this.data.push(data)
+    }
+  
+    async update(id, data) {
+      this.data = this.data.map( (ele) => ele.id == id ? data : ele )
+    }
+  }
+
+  function createModel() {
+    return new DataModel({ schema: schema, key: 'id', adapter : new TestAdapter()})
+  }
+
+  
   it('should create data model', async () => {
-    const model = new DataModel({ schema: {
-      id: { type: 'number'},
-      text: { type : 'string'}
-    }, adapter: new RestAdapter(apiAddress)})
-  });
+    const model = createModel()
+  })
+
+  it('should not create a data model with the wrong key', async () => {
+    expect( () => { 
+      new DataModel({ 
+        schema: schema, 
+        key: 'title', 
+        adapter: new TestAdapter()}) 
+      }
+    ).to.throw()
+  })
+
+  it('should be able to fetch entries', async () => {
+    const model = createModel()
+    await model.fetch()
+    expect(model.data).is.lengthOf(3)
+  })
+
+  it('should be able to delete entry', async () => {
+    const model = createModel()
+    await model.fetch()
+    const numberOfEntries = model.data.length
+    await model.delete(0)
+    await model.sync()
+    await model.fetch()
+    expect(model.data).is.lengthOf(numberOfEntries-1)
+  })
+
+  it('should be able to update entry', async () => {
+    const model = createModel()
+    await model.fetch()
+    await model.set(0, { id: 5, text: 'changed'})
+    await model.sync()
+    await model.fetch()
+    expect(model.get(5)).to.deep.equal({ id: 5, text :'changed'})
+  })
+
+  it('should be able to update entry multiple times', async () => {
+    const model = createModel()
+    await model.fetch()
+    await model.set(0, { id: 5, text: 'changed'})
+    await model.set(5, { id: 7, text: 'changed2'})
+    await model.sync()
+    await model.fetch()
+    expect(model.get(7)).to.deep.equal({ id: 7, text :'changed2'})
+  })
+
+  it('should be able to create a new entry', async () => {
+    const model = createModel()
+    await model.fetch()
+    await model.set(null, { id: 5, text: 'new'})
+    await model.sync()
+    await model.fetch()
+    expect(model.get(5)).to.deep.equal({ id: 5, text :'new'})
+  })
+
+  it('should not be able to update a property that does not exist in the scheme', async () => {
+    const model = createModel()
+    await model.fetch()
+    await model.set(null, { id: 5, title: 'hey'})
+    expect(model.get(5)).to.not.have.property('title')
+  })
+
+})
+
+describe('DataModel API Call Tests', () => {
+
 
   it('should fetch data from api', async () => {
     nock(apiAddress).get('/').reply(200, apiData);
@@ -45,7 +149,9 @@ describe('DataModel Tests', () => {
 
   it('should work with custom key', async () => {
     nock(apiAddress).get('/').reply(200, [ {title: 'test1', data: 'x'}, { title: 'test2', data: 'y'} ]);
-    const model = new DataModel({ schema: schema, key: 'title', adapter: new RestAdapter(apiAddress)})
+    const model = new DataModel({ schema: {
+      title: 'test', properties : { title : { type : 'string'}, data : { type : 'string' } }
+    }, key: 'title', adapter: new RestAdapter(apiAddress)})
     await model.fetch()
     expect(model.get('test2')).to.deep.equal({ title: 'test2', data: 'y' })
   })

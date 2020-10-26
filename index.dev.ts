@@ -10,8 +10,8 @@ startServer(port).then( async (server) => {
 
   const book = new DataModel({ 
     schema : {
-      id : { type : DataType.number },
-      text : { type : DataType.string }
+      id : { type : DataType.number, required: true },
+      text : { type : DataType.string, default: '' }
     }, 
     adapter: new RestAdapter('/api/test') 
   })

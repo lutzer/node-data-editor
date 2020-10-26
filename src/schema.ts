@@ -18,11 +18,14 @@ const getType = function(val : any) : string {
   else return 'undefined'
 }
 
-type DataSchema = { [key : string] : { 
-  type : DataType
-  default? : any
-  required? : boolean
-}}
+type DataSchema = { 
+  title: string,
+  properties: { [key : string] : { 
+    type : DataType
+    default? : any
+  }}
+  required : string[]
+}
 
 class SchemaError extends Error {
   constructor(msg : string) {
@@ -42,27 +45,38 @@ class Validator {
 
   constructor(schema : DataSchema) {
 
+    schema.required = schema.required || []
+
     //check if schema is valid
-    Object.entries(schema).forEach( ([key, val]) => {
+    if (!_.isString(schema.title)) {
+      throw new SchemaError('Schema needs to specify a title')
+    }
+    if (!_.has(schema,'properties')) {
+      throw new SchemaError('Schema needs to specify one or more properties')
+    }
+    Object.entries(schema.properties).forEach( ([key, val]) => {
       if (!_.has(val,'type') || !(val.type in DataType))
         throw new SchemaError(`Schema does not specify a correct type of ${key}.`)
-      if (_.has(val, 'required') &&  getType(val.required) != 'boolean')
-        throw new SchemaError(`Schema does not specify a boolean for required of ${key}.`)
       if (_.has(val, 'default') && getType(val.default) != val.type)
         throw new SchemaError(`Schema does not specify a default value with the correct type of ${key}.`)
     });
+
+    schema.required.forEach( (val) => {
+      if (!Object.keys(schema.properties).includes(val))
+        throw new SchemaError(`required key ${val} does not exist in properties.`)
+    })
 
     this.schema = schema
   }
 
   test(data: object) : object {
     var result = {}
-    Object.entries(this.schema).forEach( ([key, val]) => {
+    Object.entries(this.schema.properties).forEach( ([key, val]) => {
       if (_.has(data,key)) {
         if (getType(data[key]) != val.type)
           throw new DataError(`${key} is of wrong type, should be ${val.type}.`)
         result[key] = data[key]
-      } else if (val.required) {
+      } else if (this.schema.required.includes(key)) {
         throw new DataError(`${key} is empty, but is required in schema.`)
       } else if (val.default) {
         result[key] = val.default

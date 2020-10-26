@@ -11,7 +11,7 @@ class DataModel {
   adapter : Adapter
   validator : Validator
 
-  private _changedDataEntries : { id: string, op: Operation }[]
+  private _changedDataEntries : { id: string, previousId? : string, op: Operation }[]
   private _data : object[]
   key : string
 
@@ -21,6 +21,10 @@ class DataModel {
     this.key = key
     this._data = []
     this._changedDataEntries = []
+
+    if (!_.has(schema,`properties.${key}`)) {
+      throw new Error(`schema does not contain a property with the specified primary key: ${key}`)
+    }
   }
 
   get data() : object[] {
@@ -38,7 +42,7 @@ class DataModel {
     const index = this._data.findIndex( (ele) => _.isEqual(ele[this.key], id) )
     if (index >= 0) {
       this._data[index] = Object.assign({}, this._data[index], data)
-      this._changedDataEntries.push({id : id, op: Operation.change})
+      this._changedDataEntries.push({id : this._data[index][this.key], previousId: id, op: Operation.change})
     } else {
       this._data.push(data)
       this._changedDataEntries.push({id : data[this.key], op: Operation.create})
@@ -60,17 +64,11 @@ class DataModel {
       if (entry.op == Operation.delete)
         await this.adapter.delete(entry.id)
       else if (entry.op == Operation.change)
-        await this.adapter.update(entry.id, this.get(entry.id))
+        await this.adapter.update(entry.previousId, this.get(entry.id))
       else if (entry.op == Operation.create)
         await this.adapter.create(this.get(entry.id))
     }
   }
-
-  
-
-  // delete(id : string) {
-  //   await this.adapter.delete(id)
-  // }
 }
 
 export { DataModel }
