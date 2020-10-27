@@ -1,24 +1,30 @@
+import { MemoryAdapter } from './dist/adapter'
 import { DataModel } from './src/model'
-import { RestAdapter } from './src/adapter'
 import { DataType } from './src/schema'
-import { startServer } from './src/server'
+import { startEditor } from './src/server'
 
-const port = 3001
+const port = 3002
 
-startServer(port).then( async (server) => {
-  console.info("Server listening on port " + port )
-
-  const book = new DataModel({ 
-    schema : {
-      id : { type : DataType.number, required: true },
-      text : { type : DataType.string, default: '' }
-    }, 
-    adapter: new RestAdapter('/api/test') 
-  })
-
-  try {
-    await book.fetch()
-  } catch (err) {
-    console.log(err)
+startEditor({
+  models: [
+    new DataModel({ 
+      schema: {
+        title: 'test',
+        properties: {
+          id : { type : DataType.string },
+          text : { type : DataType.string }
+        }
+      },
+      adapter: new MemoryAdapter([ { id: 0, test: 'foo'}])
+    })
+  ],
+  port : port,
+  credentials : {
+    login: 'admin',
+    password: 'password'
   }
+}).then( async (server) => {
+  console.info("Server listening on port " + port )
+}).catch( (err) => {
+  console.log(err)
 })
