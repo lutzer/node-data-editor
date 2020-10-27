@@ -13,7 +13,8 @@ describe('Schema Tests', () => {
       properties: {
         id: { type: 'number', default: 0},
         text: { type : 'string', required : true, default: 'nothing' }
-      }
+      },
+      primaryKey : 'id'
     }
     const validator = new Validator(schema)
     expect(validator.schema).to.deep.equal(schema)
@@ -25,7 +26,8 @@ describe('Schema Tests', () => {
       properties: {
         id: { type: 'horse'},
         text: { type : 'string'}
-      }
+      },
+      primaryKey : 'id'
     }
     expect(() => {new Validator(schema)}).to.throw()
   });
@@ -37,6 +39,7 @@ describe('Schema Tests', () => {
         id: { type: 'number'},
         text: { type : 'string'}
       },
+      primaryKey : 'id',
       required: ['no'] 
     }
     expect(() => {new Validator(schema)}).to.throw()
@@ -48,7 +51,8 @@ describe('Schema Tests', () => {
       properties: {
         id: { type: 'number', default: 'peter' },
         text: { type : 'string'}
-      }
+      },
+      primaryKey : 'id'
     }
     expect(() => {new Validator(schema)}).to.throw()
   });
@@ -62,7 +66,8 @@ describe('Schema Tests', () => {
         object : { type: 'object' },
         array : { type: 'array' },
         boolean : { type: 'boolean' }
-      }
+      },
+      primaryKey : 'id'
     }
     const data = {
       id : 0,
@@ -81,7 +86,8 @@ describe('Schema Tests', () => {
       title: 'test',
       properties: {
         id: { type: 'number' }
-      }
+      },
+      primaryKey : 'id'
     }
     const validator = new Validator(schema)
     expect( () => validator.test({ id : 'ouch'}) ).to.throw()
@@ -94,6 +100,7 @@ describe('Schema Tests', () => {
         id: { type: 'number' },
         text: { type: 'string' }
       },
+      primaryKey : 'id',
       required : ['text']
     }
     const validator = new Validator(schema)
@@ -106,7 +113,8 @@ describe('Schema Tests', () => {
       properties: {
         id: { type: 'number' },
         text: { type: 'string', default : 'test' }
-      }
+      },
+      primaryKey : 'id'
     }
     const validator = new Validator(schema)
     const result = validator.test({id : 3})
@@ -119,7 +127,8 @@ describe('Schema Tests', () => {
       properties: {
         id: { type: 'number' },
         list: { type: 'array', default : [1,2,3] }
-      }
+      },
+      primaryKey : 'id'
     }
     const validator = new Validator(schema)
     const result = validator.test({id : 3})

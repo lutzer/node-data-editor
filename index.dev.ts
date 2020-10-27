@@ -29,11 +29,11 @@ startEditor({
       adapter: new MemoryAdapter(data)
     })
   ],
-  port : port,
-  credentials : {
-    login: 'admin',
-    password: 'password'
-  }
+  port : port
+  // credentials : {
+  //   login: 'admin',
+  //   password: 'password'
+  // }
 }).then( async (server) => {
   console.info("Server listening on port " + port )
 }).catch( (err) => {

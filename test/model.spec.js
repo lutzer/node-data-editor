@@ -21,13 +21,14 @@ const schema = {
   properties: {
     id: { type: 'number'},
     text: { type : 'string'}
-  }
+  },
+  primaryKey : 'id'
 }
 
 describe('DataModel Tests', () => {
 
   function createModel() {
-    return new DataModel({ schema: schema, key: 'id', adapter : new MemoryAdapter([
+    return new DataModel({ schema: schema, adapter : new MemoryAdapter([
       { id: 0, text: 'foo'},
       { id: 1, text: 'foo'},
       { id: '2', text: 'foo'},
@@ -42,8 +43,7 @@ describe('DataModel Tests', () => {
   it('should not create a data model with the wrong key', async () => {
     expect( () => { 
       new DataModel({ 
-        schema: schema, 
-        key: 'title', 
+        schema: schema,
         adapter: new TestAdapter()}) 
       }
     ).to.throw()
@@ -158,8 +158,12 @@ describe('DataModel API Call Tests', () => {
   it('should work with custom key', async () => {
     nock(apiAddress).get('/').reply(200, [ {title: 'test1', data: 'x'}, { title: 'test2', data: 'y'} ]);
     const model = new DataModel({ schema: {
-      title: 'test', properties : { title : { type : 'string'}, data : { type : 'string' } }
-    }, key: 'title', adapter: new RestAdapter(apiAddress)})
+      title: 'test', 
+      properties : { 
+        title : { type : 'string'}, 
+        data : { type : 'string' }
+      }, primaryKey: 'title'
+    }, adapter: new RestAdapter(apiAddress)})
     await model.fetch()
     expect(model.get('test2')).to.deep.equal({ title: 'test2', data: 'y' })
   })

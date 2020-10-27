@@ -26,6 +26,7 @@ describe('Api Route Tests', () => {
       id: { type: 'number'},
       data: { type : 'string'}
     },
+    primaryKey : 'id',
     required : ['id']
   }
 

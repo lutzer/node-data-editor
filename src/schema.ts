@@ -24,8 +24,9 @@ type DataSchema = {
     type : DataType
     default? : any
   }}
+  primaryKey: string,
   required? : string[],
-  links? : { rel : string, href : string }[]
+  links? : { rel : string, href : string }[],
 }
 
 class SchemaError extends Error {
@@ -55,6 +56,9 @@ class Validator {
     if (!_.has(schema,'properties')) {
       throw new SchemaError('Schema needs to specify one or more properties')
     }
+    if (!_.has(schema,'primaryKey')) {
+      throw new SchemaError('Schema needs to specify a primaryKey')
+    }
     Object.entries(schema.properties).forEach( ([key, val]) => {
       if (!_.has(val,'type') || !(val.type in DataType))
         throw new SchemaError(`Schema does not specify a correct type of ${key}.`)
@@ -66,6 +70,10 @@ class Validator {
       if (!Object.keys(schema.properties).includes(val))
         throw new SchemaError(`required key ${val} does not exist in properties.`)
     })
+
+    if (!_.has(schema,`properties.${schema.primaryKey}`)) {
+      throw new Error(`schema does not contain a property with the specified primaryKey: ${schema.primaryKey}`)
+    }
 
     this.schema = schema
   }

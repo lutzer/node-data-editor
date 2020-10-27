@@ -16,20 +16,15 @@ class DataModel {
   private _data : object[]
   key : string
 
-  constructor({schema, adapter, key = 'id'} : {schema : DataSchema, adapter : Adapter, key? : string}) {
+  constructor({schema, adapter} : {schema : DataSchema, adapter : Adapter, key? : string}) {
     this.validator = new Validator(schema)
     this.adapter = adapter
-    this.key = key
     this._data = []
     this._changedDataEntries = []
-
-    if (!_.has(schema,`properties.${key}`)) {
-      throw new Error(`schema does not contain a property with the specified primary key: ${key}`)
-    }
   }
 
   get data() : object[] {
-    return _.cloneDeep(this._data)
+    return this._data
   }
 
   get schema() : DataSchema {
@@ -38,30 +33,30 @@ class DataModel {
 
   get(id : string) {
     return this._data.find((ele) => {
-      return keyEquals(ele[this.key], id)
+      return keyEquals(ele[this.schema.primaryKey], id)
     })
   }
 
   create(data : object) : object {
     data = this.validator.test(data)
     this._data.push(data)
-    this._changedDataEntries.push({id : data[this.key], op: Operation.create})
+    this._changedDataEntries.push({id : data[this.schema.primaryKey], op: Operation.create})
     return data
   }
 
   update(id : string, data : object) : object {
-    const index = this._data.findIndex( (ele) => keyEquals(ele[this.key], id) )
+    const index = this._data.findIndex( (ele) => keyEquals(ele[this.schema.primaryKey], id) )
     if (index < 0)
       throw new DataError('Entry cannot be updated, because it does not exist.')
     //merge data
     data = this.validator.test(Object.assign({}, this._data[index], data))
     this._data[index] = data
-    this._changedDataEntries.push({id : this._data[index][this.key], previousId: id, op: Operation.change})
+    this._changedDataEntries.push({id : this._data[index][this.schema.primaryKey], previousId: id, op: Operation.change})
     return this._data[index]
   }
 
   delete(id : string) {
-    this._data = this._data.filter( (ele) => !keyEquals(ele[this.key], id))
+    this._data = this._data.filter( (ele) => !keyEquals(ele[this.schema.primaryKey], id))
     this._changedDataEntries.push({id : id, op: Operation.delete})
   }
 
