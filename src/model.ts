@@ -1,6 +1,7 @@
 import { Adapter } from "./adapter"
 import _ from 'lodash'
-import { DataSchema, Validator } from "./schema"
+import { DataError, DataSchema, DataType, Validator } from "./schema"
+import { keyEquals } from "./utils"
 
 enum Operation {
   create, change, delete
@@ -31,32 +32,45 @@ class DataModel {
     return _.cloneDeep(this._data)
   }
 
+  get schema() : DataSchema {
+    return this.validator.schema
+  }
+
   get(id : string) {
     return this._data.find((ele) => {
-      return _.isEqual(ele[this.key], id)
+      return keyEquals(ele[this.key], id)
     })
   }
 
-  set(id : string, data : object) {
+  create(data : object) : object {
     data = this.validator.test(data)
-    const index = this._data.findIndex( (ele) => _.isEqual(ele[this.key], id) )
-    if (index >= 0) {
-      this._data[index] = Object.assign({}, this._data[index], data)
-      this._changedDataEntries.push({id : this._data[index][this.key], previousId: id, op: Operation.change})
-    } else {
-      this._data.push(data)
-      this._changedDataEntries.push({id : data[this.key], op: Operation.create})
-    }
+    this._data.push(data)
+    this._changedDataEntries.push({id : data[this.key], op: Operation.create})
+    return data
+  }
+
+  update(id : string, data : object) : object {
+    const index = this._data.findIndex( (ele) => keyEquals(ele[this.key], id) )
+    if (index < 0)
+      throw new DataError('Entry cannot be updated, because it does not exist.')
+    //merge data
+    data = this.validator.test(Object.assign({}, this._data[index], data))
+    this._data[index] = data
+    this._changedDataEntries.push({id : this._data[index][this.key], previousId: id, op: Operation.change})
+    return this._data[index]
   }
 
   delete(id : string) {
-    this._data = this._data.filter( (ele) => !_.isEqual(ele[this.key], id))
+    this._data = this._data.filter( (ele) => !keyEquals(ele[this.key], id))
     this._changedDataEntries.push({id : id, op: Operation.delete})
   }
 
   async fetch(id : string = null) {
-    this._data = await this.adapter.list()
-    this._changedDataEntries = []
+    if (id != null) {
+      var entry = await this.adapter.read(id)
+      this._data = entry ? [entry] : []
+    } else
+      this._data = await this.adapter.list()
   }
 
   async sync() {
@@ -68,6 +82,7 @@ class DataModel {
       else if (entry.op == Operation.create)
         await this.adapter.create(this.get(entry.id))
     }
+    this._changedDataEntries = []
   }
 }
 

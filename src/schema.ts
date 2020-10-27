@@ -87,4 +87,4 @@ class Validator {
   }
 }
 
-export { DataSchema, DataType, Validator }
+export { DataSchema, DataType, Validator, DataError }

@@ -1,5 +1,6 @@
 import { DataModel } from "./model";
 import axios from 'axios';
+import { keyEquals } from "./utils";
 
 
 abstract class Adapter {
@@ -60,11 +61,11 @@ class MemoryAdapter extends Adapter {
   }
 
   async read(id) {
-    return this.data.find( (ele) => ele[this.key] == id )
+    return this.data.find( (ele) => keyEquals(ele[this.key], id) )
   }
 
   async delete(id) {
-    this.data = this.data.filter( (ele) => ele[this.key] != id)
+    this.data = this.data.filter( (ele) => !keyEquals(ele[this.key], id))
   }
 
   async create(data) {
@@ -73,7 +74,7 @@ class MemoryAdapter extends Adapter {
   }
 
   async update(id, data) {
-    this.data = this.data.map( (ele) => ele[this.key] == id ? data : ele )
+    this.data = this.data.map( (ele) => keyEquals(ele[this.key], id) ? data : ele )
   }
 }
 
