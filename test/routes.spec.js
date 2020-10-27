@@ -5,43 +5,11 @@ const _ = require('lodash');
 const expect = chai.expect
 chai.use(chaiAsPromised)
 
-const { Adapter } = require('./../dist/adapter')
+const { MemoryAdapter } = require('./../dist/adapter')
 const { DataModel } = require('./../dist/model');
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-class TestAdapter extends Adapter {
-
-  constructor() {
-    super()
-    this.data = [
-      { id: 0, data: 'foo'},
-      { id: 1, data: 'foo'},
-      { id: 2, data: 'foo'},
-    ]
-  }
-
-  async list() {
-    return this.data
-  }
-
-  async get(id) {
-    return this.data.find( (ele) => ele.id == id )
-  }
-
-  async delete(id) {
-    this.data = this.data.filter( (ele) => ele.id != id)
-  }
-
-  async create(data) {
-    this.data.push(data)
-  }
-
-  async update(id, data) {
-    this.data = this.data.map( (ele) => ele.id == id ? data : ele )
-  }
 }
 
 describe('Routes Tests', () => {
@@ -56,7 +24,11 @@ describe('Routes Tests', () => {
   }
 
   function createModel() {
-    return new DataModel({ schema: schema, key: 'id', adapter : new TestAdapter()})
+    return new DataModel({ schema: schema, key: 'id', adapter : new MemoryAdapter([
+      { id: 0, data: 'foo'},
+      { id: 1, data: 'foo'},
+      { id: 2, data: 'foo'},
+    ])})
   }
 
   it('should create a new DataModel with TestAdapter that runs all methods', async () => {

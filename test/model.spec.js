@@ -6,7 +6,7 @@ const _ = require('lodash')
 const expect = chai.expect
 chai.use(chaiAsPromised)
 
-const { RestAdapter, Adapter } = require('./../dist/adapter')
+const { RestAdapter, MemoryAdapter } = require('./../dist/adapter')
 const { DataModel } = require('./../dist/model');
 const { create } = require('lodash');
 
@@ -26,40 +26,12 @@ const schema = {
 
 describe('DataModel Tests', () => {
 
-  class TestAdapter extends Adapter {
-
-    constructor() {
-      super()
-      this.data = [
-        { id: 0, text: 'foo'},
-        { id: 1, text: 'foo'},
-        { id: 2, text: 'foo'},
-      ]
-    }
-  
-    async list() {
-      return this.data
-    }
-  
-    async get(id) {
-      return this.data.find( (ele) => ele.id == id )
-    }
-  
-    async delete(id) {
-      this.data = this.data.filter( (ele) => ele.id != id)
-    }
-  
-    async create(data) {
-      this.data.push(data)
-    }
-  
-    async update(id, data) {
-      this.data = this.data.map( (ele) => ele.id == id ? data : ele )
-    }
-  }
-
   function createModel() {
-    return new DataModel({ schema: schema, key: 'id', adapter : new TestAdapter()})
+    return new DataModel({ schema: schema, key: 'id', adapter : new MemoryAdapter([
+      { id: 0, text: 'foo'},
+      { id: 1, text: 'foo'},
+      { id: 2, text: 'foo'},
+    ])})
   }
 
   

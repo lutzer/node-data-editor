@@ -6,7 +6,8 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "allowSyntheticDefaultImports" : true,
-    "esModuleInterop" : true
+    "esModuleInterop" : true,
+    "declaration": true
   },
   "include" : ["./src/**/*"],
   "exclude" : ["./test/*"]

@@ -4,11 +4,11 @@ import axios from 'axios';
 
 abstract class Adapter {
 
-  abstract async list() : Promise<any>
-  abstract async read(id : string) : Promise<any>
+  abstract async list() : Promise<object[]>
+  abstract async read(id : string) : Promise<object>
   abstract async update(id: string, data : any) : Promise<void>
   abstract async delete(id : string) : Promise<void>
-  abstract async create(data: any) : Promise<any>
+  abstract async create(data: any) : Promise<object>
 }
 
 class RestAdapter extends Adapter {
@@ -20,12 +20,12 @@ class RestAdapter extends Adapter {
     this.address = address
   }
 
-  async list(): Promise<any> {
+  async list(): Promise<object[]> {
     const result = await axios.get(`${this.address}/`)
     return result.data
   }
 
-  async read(id: string): Promise<any> {
+  async read(id: string): Promise<object> {
     const result = await axios.get(`${this.address}/${id}`)
     return result.data
   }
@@ -34,14 +34,47 @@ class RestAdapter extends Adapter {
     await axios.put(`${this.address}/${id}`, data)
   }
 
-  async create(data: any) {
+  async create(data: any) : Promise<object> {
     const result = await axios.post(`${this.address}/`, data)
     return result.data
   }
 
   async delete(id: string) {
-    const result = await axios.delete(`${this.address}/${id}`)
+    await axios.delete(`${this.address}/${id}`)
   }
 }
 
-export { Adapter, RestAdapter }
+class MemoryAdapter extends Adapter {
+
+  data : object[]
+  key : string
+
+  constructor(data : object[], key : string = 'id') {
+    super()
+    this.data = data
+    this.key = key
+  }
+
+  async list() {
+    return this.data
+  }
+
+  async read(id) {
+    return this.data.find( (ele) => ele[this.key] == id )
+  }
+
+  async delete(id) {
+    this.data = this.data.filter( (ele) => ele[this.key] != id)
+  }
+
+  async create(data) {
+    this.data.push(data)
+    return data;
+  }
+
+  async update(id, data) {
+    this.data = this.data.map( (ele) => ele[this.key] == id ? data : ele )
+  }
+}
+
+export { Adapter, RestAdapter, MemoryAdapter }

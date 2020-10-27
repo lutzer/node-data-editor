@@ -24,7 +24,8 @@ type DataSchema = {
     type : DataType
     default? : any
   }}
-  required : string[]
+  required? : string[],
+  links? : { rel : string, href : string }[]
 }
 
 class SchemaError extends Error {
