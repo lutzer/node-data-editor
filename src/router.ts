@@ -1,6 +1,16 @@
+import Koa from 'koa'
 import Router from '@koa/router'
 import { AppContext } from './server'
 import bodyParser from 'koa-body'
+import koaSend from 'koa-send'
+import { config } from './config'
+import { checkBasicAuth } from './utils'
+
+const authMiddleware = async function(context : AppContext, next : Koa.Next) {
+  if (context.credentials && !checkBasicAuth(context.header, context.credentials.login, context.credentials.password))
+    context.throw(401, 'No authorization');
+  await next()
+}
 
 class ApiError extends Error {
   statusCode : number
@@ -11,8 +21,11 @@ class ApiError extends Error {
 }
 
 const apiRouter = new Router({
-  prefix : '/api'
+  prefix : config.apiPrefix
 })
+
+// all api routes require authentification
+apiRouter.use(authMiddleware)
 
 apiRouter.get('/', async (context : AppContext) => {
   const schemas = context.models.map( (model) => model.schema)
@@ -86,6 +99,14 @@ apiRouter.put('/:model/:id', bodyParser(), async (context : AppContext) => {
   }
 })
 
+const staticRouter = new Router()
+
+staticRouter.get('', async(context) => {
+  return koaSend(context, context.path == '/' ? '/index.html' : context.path, {
+    root: config.staticDirectory
+  })
+})
 
 
-export { apiRouter }
+
+export { apiRouter, staticRouter }

@@ -1,19 +1,13 @@
-import { use } from 'chai'
 import { Server } from 'http'
 import Koa from 'koa'
 import { DataModel } from './model'
 import { apiRouter } from './router'
-import { checkBasicAuth } from './utils'
+import serve from 'koa-static'
+import { config } from './config'
 
 type Credentials = {
   login: string
   password: string
-}
-
-const authMiddleware = async function(context : AppContext, next : Koa.Next) {
-  if (context.credentials && !checkBasicAuth(context.header, context.credentials.login, context.credentials.password))
-    context.throw(401, 'No authorization');
-  await next()
 }
 
 interface AppContext extends Koa.DefaultContext {
@@ -31,8 +25,8 @@ const startEditor = function({models, port = 3002, credentials = null} : {
   app.context.models = models
   app.context.credentials = credentials
 
-  app.use(authMiddleware)
   app.use(apiRouter.routes())
+  app.use(serve(config.staticDirectory));
 
   return new Promise<Server>( (resolve) => {
     const server = app.listen(port, () => {

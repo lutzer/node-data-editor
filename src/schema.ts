@@ -1,6 +1,6 @@
 import _ from "lodash";
 
-// type DataType = 'string'|'number'|'boolean'|'object'|'array'
+// type DataType = 'string' | 'number' | 'boolean' | 'object' | 'array'
 enum DataType { 
   string = 'string',
   number = 'number',
