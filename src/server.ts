@@ -1,40 +1,33 @@
 import { Server } from 'http'
 import Koa from 'koa'
 import { DataModel } from './model'
-import { apiRouter } from './router'
+import { apiRouter, Credentials } from './router'
 import serve from 'koa-static'
 import { config } from './config'
 
-type Credentials = {
-  login: string
-  password: string
-}
-
 interface AppContext extends Koa.DefaultContext {
   models : DataModel[]
-  credentials : Credentials
+  credentials : Credentials | null
 }
 
-const startEditor = function({models, port = 3002, credentials = null} : {
-  models : DataModel[], 
-  port? : number, 
+const serveEditor = function({ models, port = 3002, credentials } : {
+  models : DataModel[],
+  port? : number,
   credentials?: Credentials
 }) : Promise<Server> {
-  const app = new Koa<null,AppContext>();
+  const app = new Koa<{}, AppContext>()
 
   app.context.models = models
-  app.context.credentials = credentials
+  app.context.credentials = credentials || null
 
   app.use(apiRouter.routes())
-  app.use(serve(config.staticDirectory));
+  app.use(serve(config.staticDirectory))
 
-  return new Promise<Server>( (resolve) => {
+  return new Promise<Server>((resolve) => {
     const server = app.listen(port, () => {
       resolve(server)
     })
   })
 }
 
-
-
-export { startEditor, AppContext }
+export { serveEditor, AppContext }

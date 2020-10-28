@@ -1,7 +1,7 @@
 import { MemoryAdapter } from './dist/adapter'
 import { DataSchema, DataType } from './dist/schema'
 import { DataModel } from './src/model'
-import { startEditor } from './src/server'
+import { serveEditor } from './src/server'
 
 const port = 3002
 
@@ -14,7 +14,8 @@ const schema : DataSchema = {
     boolean : { type : DataType.boolean },
     array : { type : DataType.array },
     object : { type : DataType.object }
-  }
+  },
+  primaryKey : 'id'
 }
 
 const data = [
@@ -22,11 +23,11 @@ const data = [
   { id: '1', text: 'lorem ipsum', number: 43, boolean: false, array: [4,5,6], object: { x: 10 }}
 ]
 
-startEditor({
+serveEditor({
   models: [
     new DataModel({ 
       schema: schema,
-      adapter: new MemoryAdapter(data)
+      adapter: new MemoryAdapter(data, schema.primaryKey)
     })
   ],
   port : port
