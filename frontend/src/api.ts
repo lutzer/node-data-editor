@@ -17,21 +17,28 @@ function generateAuthHeader(name: string, password: string) : { Authorization : 
   }
 }
 
-type Schema = {
-  title: string
-  properties: object
-  primaryKey : string
-  required : string[]
+type SchemaProperty = {
+  type : string
+  default? : any
+  maxLength? : number
+  minimum?: number,
+  maximum?: number,
 }
 
-type Model = {
-  schema: Schema
-  data: any[]
+type Schema = {
+  title: string
+  properties: { [key : string] : SchemaProperty}
+  primaryKey : string
+  required : string[]
 }
 
 type Credentials = {
   login : string
   password : string
+}
+
+function getCredentials() : Credentials {
+  return { login : '', password: ''}
 }
 
 class Api {
@@ -49,7 +56,7 @@ class Api {
     return json
   }
 
-  static async getModel(modelName: string, credentials : Credentials) : Promise<Model> {
+  static async getModel(modelName: string, credentials : Credentials) : Promise<{ schema: Schema, data: any[]}> {
     let response = await fetch(config.apiAdress + '/' + modelName, {
       method: 'GET',
       headers: Object.assign({},{
@@ -62,9 +69,23 @@ class Api {
     return json
   }
 
-  static async getEntry(modelName: string, entryId : string, credentials : Credentials) : Promise<Model> {
+  static async getEntry(modelName: string, entryId : string, credentials : Credentials) : Promise<{schema: Schema, data: any}> {
     let response = await fetch(config.apiAdress + `/${modelName}/${entryId}` , {
       method: 'GET',
+      headers: Object.assign({},{
+        'Content-Type': 'application/json'
+      }, generateAuthHeader(credentials.login, credentials.password))
+    })
+    if (response.status !== 200)
+      throw new ApiException(response.status, response.statusText)
+    let json = await response.json()
+    return json
+  }
+
+  static async updateEntry(modelName: string, entryId : string, data: any, credentials : Credentials) : Promise<{schema: Schema, data: any}> {
+    let response = await fetch(config.apiAdress + `/${modelName}/${entryId}` , {
+      method: 'PUT',
+      body: JSON.stringify(data),
       headers: Object.assign({},{
         'Content-Type': 'application/json'
       }, generateAuthHeader(credentials.login, credentials.password))
@@ -114,5 +135,5 @@ class Api {
   // }
 }
 
-export { Api, ApiException }
-export type { Model, Schema, Credentials }
+export { Api, ApiException, getCredentials }
+export type { Schema, SchemaProperty, Credentials }

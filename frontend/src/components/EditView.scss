@@ -1,0 +1,41 @@
+@import '_vars.scss';
+
+.input-wrapper {
+  padding: $standard-spacing 0;
+
+  .input-element {
+    padding: 5px;
+    background: #00000022;
+    border-radius: $border-radius;
+    margin-top:5px;
+
+    &:focus {
+      background: #00000011;
+    }
+
+    input, textarea, select {
+      width : 100%;
+      padding: 0;
+      margin: 0;
+      border: 0;
+      outline: none;
+      background: none;
+      resize: none;
+    }
+
+    &.changed {
+      background-color: #ffff0055;
+    }
+
+    &.invalid {
+      background-color: #ff000055;
+    }
+  }
+
+  .error-field {
+    height: 1em;
+    font-size: 80%;
+    padding: 5px;
+    border-radius: $border-radius;
+  }
+}

@@ -135,7 +135,6 @@ describe('DataModel Tests', () => {
     await model.create({ id: 5, title: 'hey'})
     expect(model.get(5)).to.not.have.property('title')
   })
-
 })
 
 describe('DataModel API Call Tests', () => {
