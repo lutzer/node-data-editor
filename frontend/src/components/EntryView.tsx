@@ -1,26 +1,34 @@
-import _ from 'lodash';
-import React, { useEffect, useState} from 'react';
-import { Link, useParams } from 'react-router-dom';
-import { Api, getCredentials, Schema } from '../api';
-import { sleep } from '../utils';
-import { BooleanEditView, JsonEditorView, NumberEditView, TextEditView } from './EditViews';
+import _ from 'lodash'
+import React, { useContext, useEffect, useState} from 'react'
+import { useParams } from 'react-router-dom'
+import { Api, ApiException, Schema } from '../api'
+import { AppContext } from './App'
+import { BooleanEditView, JsonEditorView, NumberEditView, TextEditView } from './EditViews'
+import { HeaderView } from './HeaderView'
+import './styles/EntryView.scss'
 
 const EntryView = () => {
   const [ entry, setEntry ] = useState<{schema: Schema, data: any}|null>(null)
   const [ changes, setChanges ] = useState<object>({})
-
   const { modelName, entryId } = useParams<{modelName : string, entryId: string}>()
+  const { credentials, showModal, onAuthorizationError } = useContext(AppContext);
 
   useEffect( () => {
     if (!modelName || !entryId)
       return
-    Api.getEntry(modelName, entryId, getCredentials()).then( (res) => {
+
+    Api.getEntry(modelName, entryId, credentials).then( (res) => {
       if (_.has(res,'data'))
         setEntry({ schema: res.schema, data: res.data })
       else
         setEntry(null)
+    }).catch( (err : ApiException) => {
+      if (err.statusCode === 401)
+        onAuthorizationError && onAuthorizationError()
+      else
+        showModal && showModal('Error', err.message)
     })
-  },[modelName, entryId])
+  },[modelName, entryId, credentials, onAuthorizationError, showModal])
 
   async function onDataChange(key : string, value : any) {
     if (entry && entry.data[key] !== value) {
@@ -28,23 +36,28 @@ const EntryView = () => {
     } else {
       setChanges(_.omit(changes, key))
     }
-    console.log(changes)
   }
 
   async function onSave() {
-    const data = await Api.updateEntry( modelName, entryId, changes, getCredentials())
+    try {
+      await Api.updateEntry( modelName, entryId, changes, credentials)
+      showModal && showModal('Saved', 'Data was succesfully changed.' )
+    } catch (err) {
+      if (err instanceof ApiException)
+        showModal && showModal('test', err.message)
+    }
+    
   }
 
   async function onReset() {
-    const copy = _.cloneDeep(entry);
-    setEntry(null)
-    await sleep(1)
-    setEntry(copy)
+    // const copy = _.cloneDeep(entry);
+    // setEntry(null)
+    // setEntry(copy)
   }
   
   return(
     <div className='entry-view'>
-      <Link to={`/${modelName}/`}>Back</Link>
+      <HeaderView backlink={`/model/${modelName}/`}/>
       <h2>{modelName} entry</h2>
       { entry ?
         Object.entries(entry.schema.properties).map( ([key, val],i) => {
@@ -94,7 +107,7 @@ const EntryView = () => {
           )
         })
         :
-        <p>Entry does not exist</p>
+        <p className='empty-entry'>Entry does not exist</p>
       }
       { entry && 
       <div className='button-group'>

@@ -1,6 +1,6 @@
 import _ from 'lodash';
-import React, {useState} from 'react';
-import './EditView.scss';
+import React, { useState } from 'react';
+import './styles/EditView.scss';
 
 const TextEditView = ({label, text, onChange, rows = 1, maxLength = 512} : {
   label : string, 
@@ -101,7 +101,7 @@ const JsonEditorView = ({label, value, onChange} :
       <label>{label}</label>
       <div className={'input-element' + (changed ? ' changed' : '') + (!validationError ? '' : ' invalid')}>
         <textarea 
-          defaultValue={JSON.stringify(value)} 
+          defaultValue={JSON.stringify(value, null, 2)} 
           onChange={(e) => onValueChanged(e.target.value)}
           rows={10}>
         </textarea>

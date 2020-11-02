@@ -1,0 +1,26 @@
+.login-view {
+  .input-wrapper {
+    padding: $standard-spacing 0;
+  
+    .input-element {
+      padding: 5px;
+      background: #00000022;
+      border-radius: $border-radius;
+      margin-top:5px;
+  
+      &:focus {
+        background: #00000011;
+      }
+  
+      input {
+        width : 100%;
+        padding: 0;
+        margin: 0;
+        border: 0;
+        outline: none;
+        background: none;
+        resize: none;
+      }
+    }
+  }
+}

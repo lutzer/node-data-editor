@@ -1,0 +1,56 @@
+@import '_vars.scss';
+
+.app {
+  max-width: 500px;
+  margin: 0 auto;
+
+  .content {
+    margin: $standard-spacing;
+  }
+
+  h2 {
+    text-transform: capitalize;
+    letter-spacing: 0.1em;
+    letter-spacing: 0.2em;
+    font-size: 150%;
+    padding: 5px;
+    color: white;
+    background: black;
+    border-radius: $border-radius;
+    text-align: center;
+  }
+
+  .button-group {
+    text-align: center;
+    width: 100%;
+    margin: 0 auto;
+  
+    button {
+      display: inline-block;
+      margin: 10px 5px;
+      width: auto;
+    }
+  }
+
+  button, .button {
+    margin: $standard-spacing auto;
+    display: block;
+    background-color: $button-color;
+    color: $button-text-color;
+    padding: 5px;
+    font-weight: bold;
+    border-radius: 5px;
+    border: none;
+    text-align: center;
+    font-size: 90%;
+    min-width: 100px;
+  
+    &:disabled {
+      opacity: 0.2;
+    }
+  
+    &:focus {
+      outline:0;
+    }
+  }
+}

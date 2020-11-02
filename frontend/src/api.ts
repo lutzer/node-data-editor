@@ -37,18 +37,18 @@ type Credentials = {
   password : string
 }
 
-function getCredentials() : Credentials {
-  return { login : '', password: ''}
-}
-
 class Api {
 
-  static async getSchemas(credentials : Credentials) : Promise<{ schemas: Schema[]}> {
+  static async checkCredentials(credentials? : Credentials) : Promise<void> {
+    await this.getSchemas(credentials)
+  }
+
+  static async getSchemas(credentials? : Credentials) : Promise<{ schemas: Schema[]}> {
     let response = await fetch(config.apiAdress + '/', {
       method: 'GET',
       headers: Object.assign({},{
         'Content-Type': 'application/json'
-      }, generateAuthHeader(credentials.login, credentials.password))
+      }, credentials && generateAuthHeader(credentials.login, credentials.password))
     })
     if (response.status !== 200)
       throw new ApiException(response.status, response.statusText)
@@ -56,12 +56,12 @@ class Api {
     return json
   }
 
-  static async getModel(modelName: string, credentials : Credentials) : Promise<{ schema: Schema, data: any[]}> {
+  static async getModel(modelName: string, credentials? : Credentials) : Promise<{ schema: Schema, data: any[]}> {
     let response = await fetch(config.apiAdress + '/' + modelName, {
       method: 'GET',
       headers: Object.assign({},{
         'Content-Type': 'application/json'
-      }, generateAuthHeader(credentials.login, credentials.password))
+      }, credentials && generateAuthHeader(credentials.login, credentials.password))
     })
     if (response.status !== 200)
       throw new ApiException(response.status, response.statusText)
@@ -69,12 +69,12 @@ class Api {
     return json
   }
 
-  static async getEntry(modelName: string, entryId : string, credentials : Credentials) : Promise<{schema: Schema, data: any}> {
+  static async getEntry(modelName: string, entryId : string, credentials? : Credentials) : Promise<{schema: Schema, data: any}> {
     let response = await fetch(config.apiAdress + `/${modelName}/${entryId}` , {
       method: 'GET',
       headers: Object.assign({},{
         'Content-Type': 'application/json'
-      }, generateAuthHeader(credentials.login, credentials.password))
+      }, credentials && generateAuthHeader(credentials.login, credentials.password))
     })
     if (response.status !== 200)
       throw new ApiException(response.status, response.statusText)
@@ -82,13 +82,13 @@ class Api {
     return json
   }
 
-  static async updateEntry(modelName: string, entryId : string, data: any, credentials : Credentials) : Promise<{schema: Schema, data: any}> {
+  static async updateEntry(modelName: string, entryId : string, data: any, credentials? : Credentials) : Promise<{schema: Schema, data: any}> {
     let response = await fetch(config.apiAdress + `/${modelName}/${entryId}` , {
       method: 'PUT',
       body: JSON.stringify(data),
       headers: Object.assign({},{
         'Content-Type': 'application/json'
-      }, generateAuthHeader(credentials.login, credentials.password))
+      }, credentials && generateAuthHeader(credentials.login, credentials.password))
     })
     if (response.status !== 200)
       throw new ApiException(response.status, response.statusText)
@@ -135,5 +135,5 @@ class Api {
   // }
 }
 
-export { Api, ApiException, getCredentials }
+export { Api, ApiException }
 export type { Schema, SchemaProperty, Credentials }
