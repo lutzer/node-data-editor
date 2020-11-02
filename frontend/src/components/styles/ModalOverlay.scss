@@ -13,9 +13,10 @@
   z-index: 1000;
 
   .dialog {
-    width: 66%;
-    background-color: red;
+    max-width: $max-width;
+    background-color: $secondary-color;
     padding: 5px 10px;
+    border-radius: $border-radius
     // box-shadow: $item-shadow;
   }
 }

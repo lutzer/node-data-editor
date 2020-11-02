@@ -1,0 +1,21 @@
+@import '_vars.scss';
+
+.model-view {
+
+  ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+
+    li {
+      padding: $small-spacing;
+      border-radius: $border-radius;
+      background-color: $secondary-color;
+      margin: $small-spacing 0;
+
+      a {
+        display : block
+      }
+    }
+  }
+}

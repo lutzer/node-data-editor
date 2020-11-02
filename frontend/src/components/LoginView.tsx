@@ -1,7 +1,8 @@
-import React, { useContext, useState } from 'react';
-import { Api, ApiException, Credentials } from '../api';
-import { AppContext } from './App';
-import { HeaderView } from './HeaderView';
+import React, { useContext, useState } from 'react'
+import { Api, ApiException, Credentials } from '../api'
+import { AppContext } from './App'
+import { HeaderView } from './HeaderView'
+import './styles/LoginView.scss'
 
 
 const LoginView = ({ onLogin } : { onLogin : (c: Credentials) => void }) => {
@@ -26,17 +27,19 @@ const LoginView = ({ onLogin } : { onLogin : (c: Credentials) => void }) => {
     <div className='login-view'>
       <HeaderView/>
       <h2>Login</h2>
-      <div className='input-wrapper'>
-        <div className='input-element'>
-          <input type='text' placeholder='Login' onChange={(e) => setLogin(e.target.value)}/>
+      <div className='flex-container'>
+        <div className='input-wrapper'>
+          <div className='input-element'>
+            <input type='text' placeholder='Login' onChange={(e) => setLogin(e.target.value)}/>
+          </div>
         </div>
-      </div>
-      <div className='input-wrapper'>
-        <div className='input-element'>
-          <input type='password' placeholder='Password' onChange={(e) => setPassword(e.target.value)}/>
+        <div className='input-wrapper'>
+          <div className='input-element'>
+            <input type='password' placeholder='Password' onChange={(e) => setPassword(e.target.value)}/>
+          </div>
         </div>
+        <button disabled={login.length < 3 || password.length < 3} onClick={() => onLoginClicked() }>Login</button>
       </div>
-      <button disabled={login.length < 3 || password.length < 3} onClick={() => onLoginClicked() }>Login</button>
     </div>
   )
 }

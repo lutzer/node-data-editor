@@ -1,4 +1,19 @@
+@import '_vars.scss';
+
 .login-view {
+
+  .flex-container {
+    position:absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+    top:0;
+    left:0;
+  }
+
   .input-wrapper {
     padding: $standard-spacing 0;
   

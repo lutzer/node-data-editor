@@ -1,8 +1,9 @@
 @import '_vars.scss';
 
 .app {
-  max-width: 500px;
+  max-width: $max-width;
   margin: 0 auto;
+  color: $text-color;
 
   .content {
     margin: $standard-spacing;
@@ -10,12 +11,9 @@
 
   h2 {
     text-transform: capitalize;
-    letter-spacing: 0.1em;
     letter-spacing: 0.2em;
     font-size: 150%;
     padding: 5px;
-    color: white;
-    background: black;
     border-radius: $border-radius;
     text-align: center;
   }
@@ -35,7 +33,7 @@
   button, .button {
     margin: $standard-spacing auto;
     display: block;
-    background-color: $button-color;
+    background-color: $primary-color;
     color: $button-text-color;
     padding: 5px;
     font-weight: bold;
@@ -51,6 +49,15 @@
   
     &:focus {
       outline:0;
+    }
+  }
+
+  a {
+    text-decoration: none;
+    color: $text-color;
+
+    &:visited {
+      color: $text-color;
     }
   }
 }

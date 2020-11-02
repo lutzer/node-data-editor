@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Schema } from '../api';
 import { HeaderView } from './HeaderView';
-
+import './styles/ModelList.scss'
 
 const ModelList = ({schemas} : {schemas : Schema[]}) => {
 

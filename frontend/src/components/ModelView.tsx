@@ -3,7 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { Api, Schema } from '../api';
 import { AppContext } from './App';
 import { HeaderView } from './HeaderView';
-
+import './styles/ModelView.scss'
 
 const ModelView = () => {
   const [ model, setModel ] = useState<{ schema: Schema, data : any[] }>()
