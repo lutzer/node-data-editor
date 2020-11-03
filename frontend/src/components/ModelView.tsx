@@ -1,5 +1,6 @@
+import _ from 'lodash';
 import React, { useEffect, useState, useContext} from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import { Api, Schema } from '../api';
 import { AppContext } from './App';
 import { HeaderView } from './HeaderView';
@@ -16,29 +17,29 @@ const ModelView = () => {
       setModel(res);
     }).catch( (err) => {
       if (err.statusCode === 401) {
-        onAuthorizationError && onAuthorizationError()
+        onAuthorizationError()
       } else {
-        showModal && showModal('Error', err.message)
+        showModal('Error', err.message)
       }
     })
   },[modelName, credentials, showModal, onAuthorizationError])
   
   return(
     <div className='model-view'>
-      <HeaderView backlink={`/`}/>
-      <h2>{modelName} entries</h2>
-      { model ?
+      <HeaderView/>
+      { model && !_.isEmpty(model.data) ?
         <ul>
         { model.data.map( (entry, i) => {
           let key = entry[model.schema.primaryKey]
           return(
-            <li key={i}><Link to={`/model/${modelName}/${key}`}>{`/${modelName}/${key}`}</Link></li>
+            <li key={i}><Link to={`/models/${modelName}/${key}`}>{`/${modelName}/${key}`}</Link></li>
           )
         })}
         </ul>
       :
-        <p>nothing</p>
+        <p className='empty-list'>No Entries</p>
       }
+      <div className='footer'><button>Add Entry</button></div>
     </div>
   )
 }

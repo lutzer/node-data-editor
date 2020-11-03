@@ -3,6 +3,7 @@ import React, { useContext, useEffect, useState} from 'react'
 import { useParams } from 'react-router-dom'
 import { Api, ApiException, Schema } from '../api'
 import { AppContext } from './App'
+import { DeleteButton } from './DeleteButton'
 import { BooleanEditView, JsonEditorView, NumberEditView, TextEditView } from './EditViews'
 import { HeaderView } from './HeaderView'
 import './styles/EntryView.scss'
@@ -24,15 +25,15 @@ const EntryView = () => {
         setEntry(null)
     }).catch( (err : ApiException) => {
       if (err.statusCode === 401)
-        onAuthorizationError && onAuthorizationError()
+        onAuthorizationError()
       else
-        showModal && showModal('Error', err.message)
+        showModal('Error', err.message)
     })
   },[modelName, entryId, credentials, onAuthorizationError, showModal])
 
   async function onDataChange(key : string, value : any) {
-    if (entry && entry.data[key] !== value) {
-      setChanges(Object.assign(changes, _.set({}, key, value)))
+    if (entry && !_.isEqual(entry.data[key],value)) {
+      setChanges(Object.assign({}, changes, _.set({}, key, value)))
     } else {
       setChanges(_.omit(changes, key))
     }
@@ -41,24 +42,27 @@ const EntryView = () => {
   async function onSave() {
     try {
       await Api.updateEntry( modelName, entryId, changes, credentials)
-      showModal && showModal('Saved', 'Data was succesfully changed.' )
+      showModal && showModal('Saved', 'Entry was updated' )
     } catch (err) {
       if (err instanceof ApiException)
-        showModal && showModal('test', err.message)
+        showModal && showModal('Error', err.message)
     }
     
   }
 
-  async function onReset() {
-    // const copy = _.cloneDeep(entry);
-    // setEntry(null)
-    // setEntry(copy)
+  async function onDelete() {
+    try {
+      await Api.deleteEntry(modelName, entryId, credentials)
+      showModal && showModal('Deleted', 'Entry was deleted' )
+    } catch (err) {
+      if (err instanceof ApiException)
+        showModal && showModal('Error', err.message)
+    }
   }
   
   return(
     <div className='entry-view'>
-      <HeaderView backlink={`/model/${modelName}/`}/>
-      <h2>{modelName} entry</h2>
+      <HeaderView/>
       { entry ?
         Object.entries(entry.schema.properties).map( ([key, val],i) => {
           if (val.type === 'string')
@@ -110,9 +114,11 @@ const EntryView = () => {
         <p className='empty-entry'>Entry does not exist</p>
       }
       { entry && 
-      <div className='button-group'>
-        <button onClick={() => onSave()}>Save</button>
-        <button onClick={() => onReset()}>Reset</button>
+      <div className='footer'>
+        <div className='button-group'>
+          <button onClick={() => onSave()} disabled={_.isEmpty(changes)}>Save</button>
+          <DeleteButton onConfirm={() => onDelete()}/>
+        </div>
       </div>
       }
     </div>

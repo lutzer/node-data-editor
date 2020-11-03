@@ -2,6 +2,7 @@
 
 .model-view {
 
+
   ul {
     list-style-type: none;
     margin: 0;
@@ -18,4 +19,17 @@
       }
     }
   }
+
+  .empty-list {
+    text-align: center;
+    opacity: 1;
+    animation: fade .5s linear;
+  }
+
+  @keyframes fade {
+    0% { opacity: 0 }
+    75% { opacity: 0 }
+    100% { opacity: 1 }
+  }
+
 }

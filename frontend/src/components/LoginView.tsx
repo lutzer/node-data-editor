@@ -17,9 +17,9 @@ const LoginView = ({ onLogin } : { onLogin : (c: Credentials) => void }) => {
       onLogin(credentials)
     }).catch( (err : ApiException) => {
       if (err.statusCode === 401)
-        showModal && showModal('Not Authorized', "Login or password is wrong.")
+        showModal('Not Authorized', "Login or password is wrong.")
       else
-        showModal && showModal('Error', err.message)
+        showModal('Error', err.message)
     })
   }
   

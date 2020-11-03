@@ -82,6 +82,15 @@ class Api {
     return json
   }
 
+  static async deleteEntry(modelName: string, entryId : string, credentials? : Credentials) : Promise<void> {
+    let response = await fetch(config.apiAdress + `/${modelName}/${entryId}` , {
+      method: 'DELETE',
+      headers: Object.assign({},credentials && generateAuthHeader(credentials.login, credentials.password))
+    })
+    if (response.status !== 200)
+      throw new ApiException(response.status, response.statusText)
+  }
+
   static async updateEntry(modelName: string, entryId : string, data: any, credentials? : Credentials) : Promise<{schema: Schema, data: any}> {
     let response = await fetch(config.apiAdress + `/${modelName}/${entryId}` , {
       method: 'PUT',

@@ -1,0 +1,9 @@
+
+.button-delete {
+  transition: background-color 0.4s ease;
+  width: 125px !important;
+
+  &.confirm {
+    background-color: red;
+  }
+}

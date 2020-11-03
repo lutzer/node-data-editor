@@ -6,7 +6,16 @@
   color: $text-color;
 
   .content {
-    margin: $standard-spacing;
+    margin: 60px $standard-spacing 80px $standard-spacing;
+  }
+
+  .footer {
+    position: fixed;
+    bottom:0;
+    left:0;
+    padding: $small-spacing 0;
+    width:100%;
+    background-color: $header-footer-bg;
   }
 
   h2 {

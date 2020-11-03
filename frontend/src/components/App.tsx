@@ -9,17 +9,21 @@ import { LoginView } from './LoginView';
 import './styles/App.scss';
 
 type AppContextType = {
-  credentials? : Credentials,
-  onAuthorizationError? : (path? : string) => void
-  showModal? : (title: string, text: string, cancelable? : boolean) => Promise<boolean>
+  credentials : Credentials,
+  onAuthorizationError : (path? : string) => void
+  showModal : (title: string, text: string, cancelable? : boolean) => Promise<boolean>
 }
 
-const AppContext = React.createContext<AppContextType>({});
+const AppContext = React.createContext<AppContextType>({
+  credentials : { login: '', password: ''},
+  onAuthorizationError : () => {},
+  showModal : () => Promise.resolve(false)
+});
 
 function App() {
   const [schemas, setSchemas] = useState<Schema[]>([])
   const [modal, setModal] = useState<ModalProperties|null>(null)
-  const [credentials, setCredentials] = useState<Credentials|undefined>()
+  const [credentials, setCredentials] = useState<Credentials>({ login: '', password: '' })
 
   const history = useHistory()
 
@@ -63,7 +67,8 @@ function App() {
 
   function onLogin(c : Credentials) {
     setCredentials(c)
-    history.goBack()
+    history.push('/models/')
+    // history.goBack()
   }
 
   return (
@@ -75,17 +80,17 @@ function App() {
             onAuthorizationError : onAuthorizationError
           }}>
           <Switch>
-            <Route path='/login/'>
-              <LoginView onLogin={onLogin}/>
-            </Route>
-            <Route path='/model/:modelName/:entryId'>
+            <Route path='/models/:modelName/:entryId'>
               <EntryView/>
             </Route>
-            <Route path='/model/:modelName'>
+            <Route path='/models/:modelName'>
               <ModelView/>
             </Route>
-            <Route path='/'>
+            <Route path='/models'>
               <ModelList schemas={schemas}/>
+            </Route>
+            <Route path='/'>
+              <LoginView onLogin={onLogin}/>
             </Route>
           </Switch>
         </AppContext.Provider>

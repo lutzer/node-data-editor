@@ -1,3 +1,40 @@
+
+@import '_vars.scss';
+
 .header-view {
-  height: 20px;
+  position: fixed;
+  top:0;
+  left: 0;
+  background-color: $header-footer-bg;
+  padding: $small-spacing 0;
+  width: 100%;
+
+  ul.path-list {
+    list-style-type: none;
+    padding: $standard-spacing;
+    margin: 0;
+
+    li {
+      float: left;
+      margin: 0 2px;
+      background-color: $primary-color;
+      padding: 5px;
+
+      a {
+        color: white;
+      }
+
+      &:first-child {
+        border-radius: $border-radius 0 0 $border-radius;
+      }
+
+      &:last-child {
+        border-radius: 0 $border-radius $border-radius 0;
+      }
+
+      &:only-child {
+        border-radius: $border-radius;
+      }
+    }
+  }
 }
