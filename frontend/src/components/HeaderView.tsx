@@ -21,15 +21,17 @@ const HeaderView = () => {
 
   return(
     <div className='header-view'>
-      <ul className='path-list'>
-        { 
-        indices.map( (index,i) => {
-          const path = pathname.slice(0,index)
-          const name = _.last(path.split('/')) || '/'
-          return <li key={i}><Link to={path}>{name}</Link></li>
-        })
-        }
-      </ul>
+      <div>
+        <ul className='path-list'>
+          { 
+          indices.map( (index,i) => {
+            const path = pathname.slice(0,index)
+            const name = _.last(path.split('/')) || '/'
+            return <li key={i}><Link to={path}>{name}</Link></li>
+          })
+          }
+        </ul>
+      </div>
     </div>
   )
 }

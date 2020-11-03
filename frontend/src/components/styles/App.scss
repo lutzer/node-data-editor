@@ -4,9 +4,11 @@
   max-width: $max-width;
   margin: 0 auto;
   color: $text-color;
+  letter-spacing: 0.05em;
+  font-family: monospace;
 
   .content {
-    margin: 60px $standard-spacing 80px $standard-spacing;
+    margin: 60px $standard-spacing 60px $standard-spacing;
   }
 
   .footer {
@@ -42,7 +44,7 @@
   button, .button {
     margin: $standard-spacing auto;
     display: block;
-    background-color: $primary-color;
+    background-color: $button-color;
     color: $button-text-color;
     padding: 5px;
     font-weight: bold;
@@ -51,6 +53,7 @@
     text-align: center;
     font-size: 90%;
     min-width: 100px;
+    font-family: monospace;
   
     &:disabled {
       opacity: 0.2;
@@ -64,9 +67,30 @@
   a {
     text-decoration: none;
     color: $text-color;
+    font-style: italic;
 
     &:visited {
       color: $text-color;
+    }
+  }
+
+  .input-element {
+    padding: 5px;
+    background: #00000011;
+    border-radius: $border-radius;
+    margin-top:5px;
+    border: $border-style;
+
+    input, textarea, select {
+      width : 100%;
+      padding: 0;
+      margin: 0;
+      border: 0;
+      outline: none;
+      background: none;
+      resize: none;
+      letter-spacing: 0.05em;
+      font-family: monospace;
     }
   }
 }

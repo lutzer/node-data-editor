@@ -28,12 +28,12 @@ const LoginView = ({ onLogin } : { onLogin : (c: Credentials) => void }) => {
       <HeaderView/>
       <h2>Login</h2>
       <div className='flex-container'>
-        <div className='input-wrapper'>
+        <div>
           <div className='input-element'>
             <input type='text' placeholder='Login' onChange={(e) => setLogin(e.target.value)}/>
           </div>
         </div>
-        <div className='input-wrapper'>
+        <div>
           <div className='input-element'>
             <input type='password' placeholder='Password' onChange={(e) => setPassword(e.target.value)}/>
           </div>

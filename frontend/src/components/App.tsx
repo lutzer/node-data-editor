@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { Switch, Route, useHistory } from "react-router-dom";
+import { Switch, Route, useHistory, Redirect } from "react-router-dom";
 import { Api, ApiException, Credentials, Schema } from '../api';
 import { EntryView } from './EntryView';
 import { ModelList } from './ModelList';
@@ -28,7 +28,7 @@ function App() {
   const history = useHistory()
 
   const onAuthorizationError = useCallback( async (path? : string) => {
-    history.push('/login/')
+    history.push('/login')
   },[history])
 
   //load data
@@ -67,8 +67,11 @@ function App() {
 
   function onLogin(c : Credentials) {
     setCredentials(c)
-    history.push('/models/')
-    // history.goBack()
+    history.goBack()
+  }
+
+  function onLogout() {
+    setCredentials({ login: '', password: '' })
   }
 
   return (
@@ -89,8 +92,11 @@ function App() {
             <Route path='/models'>
               <ModelList schemas={schemas}/>
             </Route>
-            <Route path='/'>
+            <Route path='/login'>
               <LoginView onLogin={onLogin}/>
+            </Route>
+            <Route path='/'>
+              <Redirect to='/models'/>
             </Route>
           </Switch>
         </AppContext.Provider>

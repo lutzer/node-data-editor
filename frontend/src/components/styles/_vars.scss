@@ -1,6 +1,9 @@
 $standard-spacing: 10px;
 $small-spacing: 5px;
 
+// $colors : #BD1550,#E97F02,#F8CA00,#8A9B0F,#490A3D;
+$colors : #FFFFFF,#CBE86B,#F2E9E1,#1C140D;
+
 $max-width: 500px;
 
 $border-radius: 5px;
@@ -9,11 +12,13 @@ $border: 1px solid #666;
 
 $text-color: black;
 
-$button-color: black;
+$button-color: nth($colors,4);
 $button-text-color: white;
 
-$primary-color: #d8811d;
-$secondary-color: #dddddd;
-$modal-color: #4779d6;
+$primary-color: nth($colors,2);
+$secondary-color: nth($colors,3);
+$modal-color: nth($colors,2);
 
-$header-footer-bg: #ffffffdd;
+$header-footer-bg: #E9EFF2;
+
+$border-style: 1px solid #ddd;

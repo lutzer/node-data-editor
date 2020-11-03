@@ -55,11 +55,11 @@ serveEditor({
       adapter: new MemoryAdapter(data, schema.primaryKey)
     })
   ],
-  port: port
-  // credentials: {
-  //   login: 'admin',
-  //   password: 'hallo'
-  // }
+  port: port,
+  credentials: {
+    login: 'admin',
+    password: 'hallo'
+  }
 }).then(async () => {
   console.info('Server listening on port ' + port)
 }).catch((err) => {
