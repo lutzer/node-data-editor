@@ -10,6 +10,7 @@ const ModelView = () => {
   const [ model, setModel ] = useState<{ schema: Schema, data : any[] }>()
   const { modelName } = useParams<{modelName : string}>()
 
+  const location = useLocation()
   const { credentials, showModal, onAuthorizationError } = useContext(AppContext);
 
   useEffect( () => {
@@ -17,12 +18,12 @@ const ModelView = () => {
       setModel(res);
     }).catch( (err) => {
       if (err.statusCode === 401) {
-        onAuthorizationError()
+        onAuthorizationError(location.pathname)
       } else {
         showModal('Error', err.message)
       }
     })
-  },[modelName, credentials, showModal, onAuthorizationError])
+  },[modelName, credentials, showModal, onAuthorizationError, location])
   
   return(
     <div className='model-view'>
@@ -39,7 +40,7 @@ const ModelView = () => {
       :
         <p className='empty-list'>No Entries</p>
       }
-      <div className='footer'><button>Add Entry</button></div>
+      <div className='footer'><button><Link to={`/create/${modelName}`}>Add Entry</Link></button></div>
     </div>
   )
 }

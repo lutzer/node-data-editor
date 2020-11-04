@@ -1,20 +1,28 @@
 import _ from 'lodash';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './styles/EditView.scss';
 
-const TextEditView = ({label, text, onChange, rows = 1, maxLength = 512} : {
+const TextEditView = ({label, value, onChange, rows = 1, maxLength = 512} : {
   label : string, 
-  text : string, 
+  value : string, 
   onChange : (text: string) => void,
   rows?: number,
   maxLength? : number
 }) => {
   const [changed, setChanged] = useState(false)
+  const [current, setCurrent] = useState(value)
 
-  function onValueChanged(val : string) {
-    setChanged(val !== text)
-    onChange(val)
-  }
+  useEffect(() => {
+    onChange(current)
+  },[current]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    setChanged(current !== value)
+  }, [value, current])
+
+  useEffect( () => {
+    setCurrent(value)
+  }, [value])
 
   return(
     <div className='input-wrapper'>
@@ -22,12 +30,12 @@ const TextEditView = ({label, text, onChange, rows = 1, maxLength = 512} : {
       <div className={'input-element' + (changed ? ' changed' : '' )}>
         { rows > 1 ? 
         <textarea 
-          defaultValue={text} 
+          value={current} 
           maxLength={maxLength}
           rows={rows} 
-          onChange={(e) => onValueChanged(e.target.value)}/>
+          onChange={(e) => setCurrent(e.target.value)}/>
         :
-        <input defaultValue={text} maxLength={maxLength} onChange={(e) => onValueChanged(e.target.value)}/>
+        <input value={current} maxLength={maxLength} onChange={(e) => setCurrent(e.target.value)}/>
       }   
       </div>
     </div>
@@ -38,19 +46,27 @@ const BooleanEditView = ({label, value, onChange} :
   {label : string, value : boolean, onChange : (value: boolean) => void}
 ) => {
   const [changed, setChanged] = useState(false)
+  const [current, setCurrent] = useState(value)
 
-  function onValueChanged(val : boolean) {
-    setChanged(val !== value)
-    onChange(val)
-  }
+  useEffect(() => {
+    onChange(current)
+  },[current]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    setChanged(current !== value)
+  }, [value, current])
+
+  useEffect( () => {
+    setCurrent(value)
+  }, [value])
 
   return(
     <div className='input-wrapper'>
       <label>{label}</label>
       <div className={'input-element' + (changed ? ' changed' : '')}>
         <select
-        defaultValue={value ? 'true' : 'false'} 
-        onChange={(e) => onValueChanged(e.target.value === 'true')}> 
+        value={current ? 'true' : 'false'} 
+        onChange={(e) => setCurrent(e.target.value === 'true')}> 
           <option value="true">true</option> 
           <option value="false">false</option>
         </select> 
@@ -63,17 +79,25 @@ const NumberEditView = ({label, value, min, max, onChange} :
   {label : string, value : number, min? : number, max?: number, onChange : (value: number) => void}
 ) => {
   const [changed, setChanged] = useState(false)
+  const [current, setCurrent] = useState(value)
 
-  function onValueChanged(val : number) {
-    setChanged(val !== value)
-    onChange(val)
-  }
+  useEffect(() => {
+    onChange(current)
+  },[current]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    setChanged(current !== value)
+  }, [value, current])
+
+  useEffect( () => {
+    setCurrent(value)
+  }, [value])
 
   return(
     <div className='input-wrapper'>
       <label>{label}</label>
       <div className={'input-element' + (changed ? ' changed' : '')}>
-        <input type='number' max={max} min={min} defaultValue={value} onChange={(e) => onValueChanged(_.toNumber(e.target.value))}/>
+        <input type='number' max={max} min={min} value={current} onChange={(e) => setCurrent(_.toNumber(e.target.value))}/>
       </div>
     </div>
   )
@@ -83,26 +107,33 @@ const JsonEditorView = ({label, value, onChange} :
   {label : string, value : object, onChange : (value: object) => void}
 ) => {
   const [changed, setChanged] = useState(false)
+  const [current, setCurrent] = useState<string>(JSON.stringify(value))
   const [validationError, setValidationError] = useState<string|null>(null)
 
-  function onValueChanged(text : string) {
+  useEffect(() => {
     try {
-      const json = JSON.parse(text)
+      onChange(JSON.parse(current))
       setValidationError(null)
-      setChanged(!_.isEqual(json,value))
-      onChange(json)
     } catch (err) {
       setValidationError(err.message)
     }
-  }
+  },[current]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    setChanged(current !== JSON.stringify(value))
+  }, [value, current])
+
+  useEffect( () => {
+    setCurrent(JSON.stringify(value))
+  }, [value])
 
   return(
     <div className='input-wrapper'>
       <label>{label}</label>
       <div className={'input-element' + (changed ? ' changed' : '') + (!validationError ? '' : ' invalid')}>
         <textarea 
-          defaultValue={JSON.stringify(value, null, 2)} 
-          onChange={(e) => onValueChanged(e.target.value)}
+          value={current} 
+          onChange={(e) => setCurrent(e.target.value)}
           rows={10}>
         </textarea>
       </div>

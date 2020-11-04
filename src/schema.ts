@@ -73,6 +73,9 @@ class Validator {
 
   test(data: any) : object {
     var result : any = {}
+    if (!_.has(data, this.schema.primaryKey) || _.isEmpty(data[this.schema.primaryKey])) {
+      throw new DataError('Schema requires a primary key.')
+    }
     Object.entries(this.schema.properties).forEach(([key, val]) => {
       if (_.has(data, key)) {
         if (getType(data[key]) !== val.type) {

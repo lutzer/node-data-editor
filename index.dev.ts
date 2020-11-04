@@ -9,10 +9,10 @@ const schema : DataSchema = {
   title: 'test',
   properties: {
     id: { type: DataType.string },
-    text: { type: DataType.string },
-    number: { type: DataType.number },
-    boolean: { type: DataType.boolean },
-    array: { type: DataType.array },
+    text: { type: DataType.string, default: 'text' },
+    number: { type: DataType.number, default: 0 },
+    boolean: { type: DataType.boolean, default: false },
+    array: { type: DataType.array, default: [1, 2, 3] },
     object: { type: DataType.object }
   },
   primaryKey: 'id'
@@ -55,11 +55,11 @@ serveEditor({
       adapter: new MemoryAdapter(data, schema.primaryKey)
     })
   ],
-  port: port,
-  credentials: {
-    login: 'admin',
-    password: 'hallo'
-  }
+  port: port
+  // credentials: {
+  //   login: 'admin',
+  //   password: 'hallo'
+  // }
 }).then(async () => {
   console.info('Server listening on port ' + port)
 }).catch((err) => {

@@ -1,12 +1,13 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Switch, Route, useHistory, Redirect } from "react-router-dom";
 import { Api, ApiException, Credentials, Schema } from '../api';
-import { EntryView } from './EntryView';
+import { EditEntryView } from './EditEntryView';
 import { ModelList } from './ModelList';
 import { ModelView } from './ModelView';
 import { ModalOverlay, ModalProperties } from './ModalOverlay';
 import { LoginView } from './LoginView';
 import './styles/App.scss';
+import { CreateEntryView } from './CreateEntryView';
 
 type AppContextType = {
   credentials : Credentials,
@@ -24,10 +25,11 @@ function App() {
   const [schemas, setSchemas] = useState<Schema[]>([])
   const [modal, setModal] = useState<ModalProperties|null>(null)
   const [credentials, setCredentials] = useState<Credentials>({ login: '', password: '' })
-
+  const [prevPath, setPrevPath ] = useState<string>('/models')
   const history = useHistory()
 
   const onAuthorizationError = useCallback( async (path? : string) => {
+    path && setPrevPath(path)
     history.push('/login')
   },[history])
 
@@ -67,12 +69,13 @@ function App() {
 
   function onLogin(c : Credentials) {
     setCredentials(c)
-    history.goBack()
+    if (history.location.pathname !== prevPath)
+      history.push(prevPath)
   }
 
-  function onLogout() {
-    setCredentials({ login: '', password: '' })
-  }
+  // function onLogout() {
+  //   setCredentials({ login: '', password: '' })
+  // }
 
   return (
     <div className="app">
@@ -84,13 +87,16 @@ function App() {
           }}>
           <Switch>
             <Route path='/models/:modelName/:entryId'>
-              <EntryView/>
+              <EditEntryView/>
             </Route>
             <Route path='/models/:modelName'>
               <ModelView/>
             </Route>
             <Route path='/models'>
               <ModelList schemas={schemas}/>
+            </Route>
+            <Route path='/create/:modelName'>
+              <CreateEntryView/>
             </Route>
             <Route path='/login'>
               <LoginView onLogin={onLogin}/>

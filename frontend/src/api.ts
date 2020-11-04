@@ -51,7 +51,7 @@ class Api {
       }, credentials && generateAuthHeader(credentials.login, credentials.password))
     })
     if (response.status !== 200)
-      throw new ApiException(response.status, response.statusText)
+      throw new ApiException(response.status, await response.text())
     let json = await response.json()
     return json
   }
@@ -64,7 +64,7 @@ class Api {
       }, credentials && generateAuthHeader(credentials.login, credentials.password))
     })
     if (response.status !== 200)
-      throw new ApiException(response.status, response.statusText)
+      throw new ApiException(response.status, await response.text())
     let json = await response.json()
     return json
   }
@@ -77,7 +77,7 @@ class Api {
       }, credentials && generateAuthHeader(credentials.login, credentials.password))
     })
     if (response.status !== 200)
-      throw new ApiException(response.status, response.statusText)
+      throw new ApiException(response.status, await response.text())
     let json = await response.json()
     return json
   }
@@ -100,7 +100,21 @@ class Api {
       }, credentials && generateAuthHeader(credentials.login, credentials.password))
     })
     if (response.status !== 200)
-      throw new ApiException(response.status, response.statusText)
+      throw new ApiException(response.status, await response.text())
+    let json = await response.json()
+    return json
+  }
+
+  static async createEntry(modelName: string, data: object, credentials: Credentials) : Promise<{schema: Schema, data: any}> {
+    let response = await fetch(config.apiAdress + `/${modelName}/` , {
+      method: 'POST',
+      body: JSON.stringify(data),
+      headers: Object.assign({},{
+        'Content-Type': 'application/json'
+      }, credentials && generateAuthHeader(credentials.login, credentials.password))
+    })
+    if (response.status !== 200)
+      throw new ApiException(response.status, await response.text())
     let json = await response.json()
     return json
   }
