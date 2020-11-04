@@ -15,7 +15,8 @@ const schema : DataSchema = {
     array: { type: DataType.array, default: [1, 2, 3] },
     object: { type: DataType.object }
   },
-  primaryKey: 'id'
+  primaryKey: 'id',
+  required: ['text']
 }
 
 const data = [
@@ -37,15 +38,7 @@ const data = [
   { id: '16', text: 'lorem ipsum', number: 43, boolean: false, array: [4, 5, 6], object: { x: 10 } },
   { id: '17', text: 'lorem ipsum', number: 43, boolean: false, array: [4, 5, 6], object: { x: 10 } },
   { id: '18', text: 'lorem ipsum', number: 43, boolean: false, array: [4, 5, 6], object: { x: 10 } },
-  { id: '20', text: 'lorem', number: 42, boolean: true, array: [1, 2, 3], object: { x: 5 } },
-  { id: '21', text: 'lorem ipsum', number: 43, boolean: false, array: [4, 5, 6], object: { x: 10 } },
-  { id: '22', text: 'lorem ipsum', number: 43, boolean: false, array: [4, 5, 6], object: { x: 10 } },
-  { id: '23', text: 'lorem ipsum', number: 43, boolean: false, array: [4, 5, 6], object: { x: 10 } },
-  { id: '24', text: 'lorem ipsum', number: 43, boolean: false, array: [4, 5, 6], object: { x: 10 } },
-  { id: '25', text: 'lorem ipsum', number: 43, boolean: false, array: [4, 5, 6], object: { x: 10 } },
-  { id: '26', text: 'lorem ipsum', number: 43, boolean: false, array: [4, 5, 6], object: { x: 10 } },
-  { id: '27', text: 'lorem ipsum', number: 43, boolean: false, array: [4, 5, 6], object: { x: 10 } },
-  { id: '28', text: 'lorem ipsum', number: 43, boolean: false, array: [4, 5, 6], object: { x: 10 } }
+  { id: '20', text: 'lorem', number: 42, boolean: true, array: [1, 2, 3], object: { x: 5 } }
 ]
 
 serveEditor({

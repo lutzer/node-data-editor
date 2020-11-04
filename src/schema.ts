@@ -64,8 +64,12 @@ class Validator {
       }
     })
 
+    // validate primaryKey
     if (!_.has(schema, `properties.${schema.primaryKey}`)) {
       throw new Error(`schema does not contain a property with the specified primaryKey: ${schema.primaryKey}`)
+    }
+    if (schema.properties[schema.primaryKey].type !== 'string') {
+      throw new Error('primary key needs to be of type string.')
     }
 
     this.schema = schema

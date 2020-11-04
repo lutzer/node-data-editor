@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import React, { useContext, useEffect, useState} from 'react'
 import { useLocation, useParams } from 'react-router-dom'
-import { Api, ApiException, Schema, SchemaProperty } from '../api'
+import { Api, ApiException, Schema, SchemaProperty, Entry } from '../api'
 import { AppContext } from './App'
 import { DeleteButton } from './DeleteButton'
 import { BooleanEditView, JsonEditorView, NumberEditView, TextEditView } from './EditViews'
@@ -67,7 +67,7 @@ function renderSchemaField( { key, property, value, onChange } :
     )
 }
 
-const EditEntryView = () => {
+const EditEntryView = ({onUpdatedEntry} : { onUpdatedEntry : (res : Entry) => void}) => {
   const [ entry, setEntry ] = useState<{schema: Schema, data: any}|null>(null)
   const [ changes, setChanges ] = useState<object>({})
   const { modelName, entryId } = useParams<{modelName : string, entryId: string}>()
@@ -101,8 +101,8 @@ const EditEntryView = () => {
 
   async function onUpdate() {
     try {
-      await Api.updateEntry( modelName, entryId, changes, credentials)
-      showModal && showModal('Saved', 'Entry was updated' )
+      const result = await Api.updateEntry( modelName, entryId, changes, credentials)
+      onUpdatedEntry(result)
     } catch (err) {
       console.log(err)
       if (err instanceof ApiException)

@@ -37,6 +37,11 @@ type Credentials = {
   password : string
 }
 
+type Entry = {
+  schema: Schema,
+  data : any
+}
+
 class Api {
 
   static async checkCredentials(credentials? : Credentials) : Promise<void> {
@@ -91,7 +96,7 @@ class Api {
       throw new ApiException(response.status, response.statusText)
   }
 
-  static async updateEntry(modelName: string, entryId : string, data: any, credentials? : Credentials) : Promise<{schema: Schema, data: any}> {
+  static async updateEntry(modelName: string, entryId : string, data: any, credentials? : Credentials) : Promise<Entry> {
     let response = await fetch(config.apiAdress + `/${modelName}/${entryId}` , {
       method: 'PUT',
       body: JSON.stringify(data),
@@ -105,7 +110,7 @@ class Api {
     return json
   }
 
-  static async createEntry(modelName: string, data: object, credentials: Credentials) : Promise<{schema: Schema, data: any}> {
+  static async createEntry(modelName: string, data: object, credentials: Credentials) : Promise<Entry> {
     let response = await fetch(config.apiAdress + `/${modelName}/` , {
       method: 'POST',
       body: JSON.stringify(data),
@@ -129,4 +134,4 @@ function getCredentials() : Credentials {
 }
 
 export { Api, ApiException, setCredentials, getCredentials }
-export type { Schema, SchemaProperty, Credentials }
+export type { Schema, SchemaProperty, Entry, Credentials }

@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Switch, Route, useHistory, Redirect } from "react-router-dom";
-import { Api, ApiException, Credentials, Schema } from '../api';
+import { Api, ApiException, Credentials, Entry, Schema } from '../api';
 import { EditEntryView } from './EditEntryView';
 import { ModelList } from './ModelList';
 import { ModelView } from './ModelView';
@@ -77,6 +77,14 @@ function App() {
   //   setCredentials({ login: '', password: '' })
   // }
 
+  function onUpdate(entry : Entry, newEntry : boolean = false) {
+    history.push(`/models/${entry.schema.title}/${entry.data[entry.schema.primaryKey]}`)
+    if (newEntry)
+      showModal('Created', 'Entry was created.' )
+    else
+      showModal('Created', 'Entry was updated.' )
+  }
+
   return (
     <div className="app">
       <div className='content'>
@@ -87,7 +95,7 @@ function App() {
           }}>
           <Switch>
             <Route path='/models/:modelName/:entryId'>
-              <EditEntryView/>
+              <EditEntryView onUpdatedEntry={(e) => onUpdate(e,false)}/>
             </Route>
             <Route path='/models/:modelName'>
               <ModelView/>
@@ -96,7 +104,7 @@ function App() {
               <ModelList schemas={schemas}/>
             </Route>
             <Route path='/create/:modelName'>
-              <CreateEntryView/>
+              <CreateEntryView onNewEntry={(e) => onUpdate(e,true)}/>
             </Route>
             <Route path='/login'>
               <LoginView onLogin={onLogin}/>

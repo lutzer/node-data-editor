@@ -1,20 +1,19 @@
 import _ from 'lodash'
 import React, { useContext, useEffect, useState} from 'react'
-import { useHistory, useLocation, useParams } from 'react-router-dom'
-import { Api, ApiException, Schema } from '../api'
+import { useLocation, useParams } from 'react-router-dom'
+import { Api, ApiException, Entry, Schema } from '../api'
 import { AppContext } from './App'
 import { renderSchemaField } from './EditEntryView'
 import { HeaderView } from './HeaderView'
 import './styles/EntryView.scss'
 
-const CreateEntryView = () => {
+const CreateEntryView = ({ onNewEntry } : { onNewEntry : (res: Entry) => void}) => {
   const [ schema, setSchema ] = useState<Schema|null>(null)
   const [ data, setData ] = useState<object>({})
   const { modelName } = useParams<{modelName : string}>()
   const { credentials, showModal, onAuthorizationError } = useContext(AppContext);
 
   const location = useLocation()
-  const history = useHistory()
 
   useEffect( () => {
     if (!modelName)
@@ -36,8 +35,7 @@ const CreateEntryView = () => {
   async function onCreate() {
     try {
       const result = await Api.createEntry( modelName, data, credentials)
-      showModal && showModal('Created', 'Entry was created' )
-      history.push(`/models/${modelName}/`)
+      onNewEntry(result)
     } catch (err) {
       if (err instanceof ApiException)
         showModal && showModal('Error', err.message)
