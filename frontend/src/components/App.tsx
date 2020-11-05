@@ -46,7 +46,7 @@ function App() {
       else 
         showModal('Error', err.message)
     }
-  },[credentials, onAuthorizationError])
+  },[credentials]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // set global function
   const showModal = function(title: string, text: string, cancelable : boolean = false) : Promise<boolean> {

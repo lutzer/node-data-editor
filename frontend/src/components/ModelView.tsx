@@ -23,7 +23,7 @@ const ModelView = () => {
         showModal('Error', err.message)
       }
     })
-  },[modelName, credentials, showModal, onAuthorizationError, location])
+  },[modelName, credentials]) // eslint-disable-line react-hooks/exhaustive-deps
   
   return(
     <div className='model-view'>

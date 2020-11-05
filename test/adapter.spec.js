@@ -6,7 +6,8 @@ const _ = require('lodash')
 const expect = chai.expect
 chai.use(chaiAsPromised)
 
-const { RestAdapter } = require('./../dist/adapter')
+const { RestAdapter, MemoryAdapter } = require('./../dist/adapter');
+const { isPrimitive } = require('util');
 
 describe('RestAdapter Tests', () => {
 
@@ -51,6 +52,50 @@ describe('RestAdapter Tests', () => {
     nock(apiAddress).delete('/1').reply(400)
     const adapter = new RestAdapter(apiAddress)
     await expect(adapter.delete('1')).to.be.rejectedWith(`Request failed with status code 400`)
+  });
+
+}); 
+
+describe('Memory Adapter Tests', () => {
+
+  const apiData = [ { id: 1}, {id: 2}, {id: 3} ]
+
+  function createAdapter() {
+    return new MemoryAdapter(apiData, 'id')
+  }
+
+  it('list() should return api data', async () => {
+    const adapter = createAdapter()
+    const response = await adapter.list()
+    expect(response).to.deep.equal(apiData)
+  });
+
+  it('read() should return api data', async () => {
+    const adapter = createAdapter()
+    const response = await adapter.read(1)
+    expect(response).to.deep.equal(apiData[0])
+  });
+
+  it('delete() should make a succesfull request', async () => {
+    const adapter = createAdapter()
+    await adapter.delete('1')
+  });
+
+  it('create() should make a succesfull request', async () => {
+    const adapter = createAdapter()
+    await adapter.create({ id: 5})
+    expect(adapter.data).is.lengthOf(apiData.length + 1)
+  });
+
+  it('update() should make a succesfull request', async () => {
+    const adapter = createAdapter()
+    await adapter.update('1', { id: -1})
+    expect(adapter.data[0]).to.deep.equal({ id: -1})
+  });
+
+  it('delete() should throw error on a not succesfull request', async () => {
+    const adapter = createAdapter()
+    await expect(adapter.delete('-1')).to.be.rejectedWith()
   });
 
 }); 

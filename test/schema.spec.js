@@ -11,7 +11,7 @@ describe('Schema Tests', () => {
     const schema = {
       title: 'test',
       properties: {
-        id: { type: 'number', default: 0},
+        id: { type: 'string', default: '0'},
         text: { type : 'string', required : true, default: 'nothing' }
       },
       primaryKey : 'id'
@@ -61,7 +61,7 @@ describe('Schema Tests', () => {
     const schema = {
       title: 'test',
       properties: {
-        id: { type: 'number' },
+        id: { type: 'string' },
         text: { type: 'string' },
         object : { type: 'object' },
         array : { type: 'array' },
@@ -70,7 +70,7 @@ describe('Schema Tests', () => {
       primaryKey : 'id'
     }
     const data = {
-      id : 0,
+      id : '0',
       text: 'bla',
       object: { x: 6 },
       array : [1,2,3],
@@ -85,19 +85,19 @@ describe('Schema Tests', () => {
     const schema = {
       title: 'test',
       properties: {
-        id: { type: 'number' }
+        id: { type: 'string' }
       },
       primaryKey : 'id'
     }
     const validator = new Validator(schema)
-    expect( () => validator.test({ id : 'ouch'}) ).to.throw()
+    expect( () => validator.test({ id : 0}) ).to.throw()
   });
 
   it('validation should throw error if required value is not supplied', async () => {
     const schema = {
       title: 'test',
       properties: {
-        id: { type: 'number' },
+        id: { type: 'string' },
         text: { type: 'string' }
       },
       primaryKey : 'id',
@@ -111,13 +111,13 @@ describe('Schema Tests', () => {
     const schema = {
       title: 'test',
       properties: {
-        id: { type: 'number' },
+        id: { type: 'string' },
         text: { type: 'string', default : 'test' }
       },
       primaryKey : 'id'
     }
     const validator = new Validator(schema)
-    const result = validator.test({id : 3})
+    const result = validator.test({id : '3'})
     expect(result.text).to.be.equal('test')
   });
 
@@ -125,13 +125,13 @@ describe('Schema Tests', () => {
     const schema = {
       title: 'test',
       properties: {
-        id: { type: 'number' },
+        id: { type: 'string' },
         list: { type: 'array', default : [1,2,3] }
       },
       primaryKey : 'id'
     }
     const validator = new Validator(schema)
-    const result = validator.test({id : 3})
+    const result = validator.test({id : '3'})
     expect(result.list).to.deep.equal([1,2,3])
   });
 

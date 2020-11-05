@@ -2,6 +2,7 @@
 import axios from 'axios'
 import { keyEquals } from './utils'
 import { Credentials } from './router'
+import _ from 'lodash'
 
 abstract class Adapter {
   abstract async list() : Promise<object[]>
@@ -10,6 +11,8 @@ abstract class Adapter {
   abstract async delete(id : string) : Promise<void>
   abstract async create(data: any) : Promise<object>
 }
+
+class AdapterError extends Error {}
 
 class RestAdapter extends Adapter {
   address : string
@@ -53,7 +56,7 @@ class MemoryAdapter extends Adapter {
 
   constructor(data : object[], primaryKey : string = 'id') {
     super()
-    this.data = data
+    this.data = _.cloneDeep(data)
     this.key = primaryKey
   }
 
@@ -67,6 +70,12 @@ class MemoryAdapter extends Adapter {
   }
 
   async delete(id : string) {
+    const includes = this.data.find((ele : any) => {
+      return keyEquals(ele[this.key], id)
+    }) !== undefined
+    if (!includes) {
+      throw new AdapterError(`Entry ${id} does not exist.`)
+    }
     this.data = this.data.filter((ele : any) => !keyEquals(ele[this.key], id))
   }
 

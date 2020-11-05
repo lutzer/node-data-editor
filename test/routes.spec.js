@@ -23,7 +23,7 @@ describe('Api Route Tests', () => {
   const schema = {
     title : 'test',
     properties: {
-      id: { type: 'number'},
+      id: { type: 'string'},
       data: { type : 'string'}
     },
     primaryKey : 'id',
@@ -32,9 +32,9 @@ describe('Api Route Tests', () => {
 
   function createModel() {
     return new DataModel({ schema: schema, key: 'id', adapter : new MemoryAdapter([
-      { id: 0, data: 'foo'},
-      { id: 1, data: 'foo'},
-      { id: 2, data: 'foo'},
+      { id: '0', data: 'foo'},
+      { id: '1', data: 'foo'},
+      { id: '2', data: 'foo'},
     ])})
   }
 
@@ -101,10 +101,18 @@ describe('Api Route Tests', () => {
   })
 
   it(`should be able to create a new entry`, async () => {
-    const data = { id: 4, data: 'bar'}
+    const data = { id: '4', data: 'bar'}
     let result = await connect().post(`/api/${schema.title}/` ).send(data).auth(credentials.login, credentials.password)
     expect(result).to.have.status(200)
     expect(result.body.data).to.deep.equal(data)
+  })
+
+  it(`should be able to create a new entry, that extends data by one entry`, async () => {
+    const data = { id: '4', data: 'bar'}
+    let result = await connect().post(`/api/${schema.title}/` ).send(data).auth(credentials.login, credentials.password)
+    result = await connect().get(`/api/${schema.title}/`).send(data).auth(credentials.login, credentials.password)
+    expect(result).to.have.status(200)
+    expect(result.body.data).to.be.lengthOf(4)
   })
 
   it(`should not be able to create a new entry without required field`, async () => {
@@ -118,7 +126,7 @@ describe('Api Route Tests', () => {
     var result = await connect().put(`/api/${schema.title}/0`).send(data).auth(credentials.login, credentials.password)
     result = await connect().get(`/api/${schema.title}/0`).auth(credentials.login, credentials.password)
     expect(result).to.have.status(200)
-    expect(result.body.data).to.deep.equal({ id: 0, data: 'bar'})
+    expect(result.body.data).to.deep.equal({ id: '0', data: 'bar'})
   })
 
   it(`should receive error, when updated entry does not exist`, async () => {
