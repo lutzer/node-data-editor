@@ -1,10 +1,10 @@
 {
   "name": "node-data-editor",
-  "version": "1.0.0",
-  "description": "a customizable data editor for node",
+  "version": "0.0.1",
+  "description": "a simple data editor for node, based on json schema with a customziable data adapter structure.",
   "main": "index.js",
   "scripts": {
-    "dev": "npx ts-node-dev index.dev.ts -- -dev",
+    "dev": "npx ts-node-dev dev-server.ts -- -dev",
     "test": "npx tsc && npx mocha test/*.spec.js",
     "build": "npx tsc && npm run build --prefix frontend/",
     "lint": "eslint 'src/**' --ext .ts"

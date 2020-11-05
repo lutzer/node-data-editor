@@ -30,7 +30,7 @@ const TextEditView = ({label, value, onChange, rows = 1, maxLength = 512} : {
       <div className={'input-element' + (changed ? ' changed' : '' )}>
         { rows > 1 ? 
         <textarea 
-          value={current} 
+          value={current || ''} 
           maxLength={maxLength}
           rows={rows} 
           onChange={(e) => setCurrent(e.target.value)}/>
@@ -97,7 +97,7 @@ const NumberEditView = ({label, value, min, max, onChange} :
     <div className='input-wrapper'>
       <label>{label}</label>
       <div className={'input-element' + (changed ? ' changed' : '')}>
-        <input type='number' max={max} min={min} value={current} onChange={(e) => setCurrent(_.toNumber(e.target.value))}/>
+        <input type='number' max={max} min={min} value={current || ''} onChange={(e) => setCurrent(_.toNumber(e.target.value))}/>
       </div>
     </div>
   )
@@ -132,7 +132,7 @@ const JsonEditorView = ({label, value, onChange} :
       <label>{label}</label>
       <div className={'input-element' + (changed ? ' changed' : '') + (!validationError ? '' : ' invalid')}>
         <textarea 
-          value={current} 
+          value={current || ''} 
           onChange={(e) => setCurrent(e.target.value)}
           rows={10}>
         </textarea>
