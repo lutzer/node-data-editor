@@ -1,4 +1,3 @@
-
 import axios from 'axios'
 import { keyEquals } from './utils'
 import { Credentials } from './router'
@@ -80,7 +79,7 @@ class MemoryAdapter extends Adapter {
   }
 
   async create(data: object) {
-    this.data.push(data)
+    this.data.concat(data)
     return data
   }
 

@@ -1,4 +1,4 @@
-import { MemoryAdapter } from './dist/adapter'
+import { MemoryAdapter } from './src/adapter'
 import { DataSchema, DataType } from './dist/schema'
 import { DataModel } from './src/model'
 import { serveEditor } from './src/server'
@@ -33,11 +33,11 @@ serveEditor({
       adapter: new MemoryAdapter(data, schema.primaryKey)
     })
   ],
-  port: port,
-  credentials: {
-    login: 'admin',
-    password: 'hallo'
-  }
+  port: port
+  // credentials: {
+  //   login: 'admin',
+  //   password: 'hallo'
+  // }
 }).then(async () => {
   console.info('Server listening on port ' + port)
 }).catch((err) => {
