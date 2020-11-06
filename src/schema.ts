@@ -18,12 +18,17 @@ const getType = function(val : any) : string {
   else return 'undefined'
 }
 
+type DataSchemaProperty = { [key : string] : {
+  type : DataType
+  default? : any
+  maxLength? : number
+  minimum?: number,
+  maximum?: number,
+}}
+
 type DataSchema = {
   title: string,
-  properties: { [key : string] : {
-    type : DataType
-    default? : any
-  }}
+  properties: DataSchemaProperty,
   primaryKey: string,
   required? : string[],
   links? : { rel : string, href : string }[],
@@ -35,6 +40,10 @@ class DataError extends Error {}
 
 class Validator {
   schema : DataSchema
+
+  // private validateNumber(key : string, val : number) {
+  //   const schemaProperty = schema.prop
+  // }
 
   constructor(schema : DataSchema) {
     schema.required = schema.required || []

@@ -9,7 +9,7 @@ chai.use(chaiHttp)
 
 const { MemoryAdapter } = require('./../dist/adapter')
 const { DataModel } = require('./../dist/model');
-const { serveEditor } = require('./../dist/server')
+const { startDataEditor } = require('./../dist/server')
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -43,7 +43,7 @@ describe('Api Route Tests', () => {
 
   beforeEach( async () => {
     model = createModel()
-    server = await serveEditor({ 
+    server = await startDataEditor({ 
       models: [model], 
       port: 3002, 
       credentials : credentials
@@ -109,8 +109,8 @@ describe('Api Route Tests', () => {
 
   it(`should be able to create a new entry, that extends data by one entry`, async () => {
     const data = { id: '4', data: 'bar'}
-    let result = await connect().post(`/api/${schema.title}/` ).send(data).auth(credentials.login, credentials.password)
-    result = await connect().get(`/api/${schema.title}/`).send(data).auth(credentials.login, credentials.password)
+    await connect().post(`/api/${schema.title}/` ).send(data).auth(credentials.login, credentials.password)
+    let result = await connect().get(`/api/${schema.title}/`).auth(credentials.login, credentials.password)
     expect(result).to.have.status(200)
     expect(result.body.data).to.be.lengthOf(4)
   })

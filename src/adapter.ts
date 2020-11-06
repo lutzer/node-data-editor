@@ -79,7 +79,7 @@ class MemoryAdapter extends Adapter {
   }
 
   async create(data: object) {
-    this.data.concat(data)
+    this.data.push(data)
     return data
   }
 

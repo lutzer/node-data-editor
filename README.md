@@ -4,8 +4,7 @@ A customizable data editor for node, using JSON schema. By using custom Data Ada
 ## Usage
 
 ## basic exampe
-
-```
+```javascript
   const { serveEditor, DataModel, MemoryAdapter } = require('node-data-editor')
 
   serveEditor({
@@ -26,10 +25,9 @@ A customizable data editor for node, using JSON schema. By using custom Data Ada
   }).then( (server) => { console.log('Editor is available on localhost:3000')})
 ```
 
-## schema Description
-
+## Schema Description
 ```
-  # Datatypes: 'string'|'number'|'boolean'|'object'|'array
+  // Datatypes: 'string'|'number'|'boolean'|'object'|'array
   {
     title: string,
     properties: { [key : string] : {
@@ -40,6 +38,9 @@ A customizable data editor for node, using JSON schema. By using custom Data Ada
     required? : string[],
   }
 ```
+
+### Schema Examples
+```
 {
   "title": "Book",
   "properties": {
@@ -48,20 +49,16 @@ A customizable data editor for node, using JSON schema. By using custom Data Ada
     },
     "author": {
       "type": "string",
-      "default" : "Peter"
+      "default" : "John Doe"
     },
     "title: {
-      "type: "string"
+      "type: "string",
+      "default" : "untitled"
     }
   },
+  "primaryKey: "id",
   "required": [
     "title"
-  ],
-  "links": [
-    {
-      "rel": "Pages",
-      "href": "myapi/Pages?bookId={id}"
-    }
   ]
 }
 ```
@@ -69,9 +66,15 @@ A customizable data editor for node, using JSON schema. By using custom Data Ada
 # Development
 * run `npm install`
 * run `npm run dev` to start test server
+* run `npm run build` to start a full production build
 
-# Unit Tests
+## Unit Tests
 * run `npm run test`
 
-# Frontend Development
+## Frontend Development
 * see /frontend/ dir
+* run `cd frontend; npm start` to run frontend dev server
+
+## Troubleshooting
+
+* node-sass currently requires a node version < 15
