@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import Ajv from 'ajv'
 
 // type DataType = 'string' | 'number' | 'boolean' | 'object' | 'array'
 enum DataType {
@@ -18,17 +19,19 @@ const getType = function(val : any) : string {
   else return 'undefined'
 }
 
-type DataSchemaProperty = { [key : string] : {
+type DataSchemaProperty = {
   type : DataType
   default? : any
   maxLength? : number
   minimum?: number,
   maximum?: number,
-}}
+}
 
 type DataSchema = {
-  title: string,
-  properties: DataSchemaProperty,
+  $id: string,
+  type? : string,
+  additionalProperties? : boolean,
+  properties: { [key : string] : DataSchemaProperty },
   primaryKey: string,
   required? : string[],
   links? : { rel : string, href : string }[],
@@ -36,28 +39,25 @@ type DataSchema = {
 
 class SchemaError extends Error {}
 
-class DataError extends Error {}
+class ValidationError extends Error {}
 
 class Validator {
   schema : DataSchema
-
-  // private validateNumber(key : string, val : number) {
-  //   const schemaProperty = schema.prop
-  // }
+  ajvValidate : Ajv.ValidateFunction
 
   constructor(schema : DataSchema) {
     schema.required = schema.required || []
+    schema.type = schema.type || 'object'
+    schema.additionalProperties = schema.additionalProperties || false
 
     // check if schema is valid
-    if (!_.isString(schema.title)) {
-      throw new SchemaError('Schema needs to specify a title')
+    if (!_.isString(schema.$id)) {
+      throw new SchemaError('Schema needs to specify an id')
     }
     if (!_.has(schema, 'properties')) {
       throw new SchemaError('Schema needs to specify one or more properties')
     }
-    if (!_.has(schema, 'primaryKey')) {
-      throw new SchemaError('Schema needs to specify a primaryKey')
-    }
+
     Object.entries(schema.properties).forEach(([key, val]) => {
       if (!_.has(val, 'type') || !(val.type in DataType)) {
         throw new SchemaError(`Schema does not specify a correct type of ${key}.`)
@@ -74,35 +74,38 @@ class Validator {
     })
 
     // validate primaryKey
+    if (!_.has(schema, 'primaryKey')) {
+      throw new SchemaError('Schema needs to specify a primaryKey')
+    }
     if (!_.has(schema, `properties.${schema.primaryKey}`)) {
-      throw new Error(`schema does not contain a property with the specified primaryKey: ${schema.primaryKey}`)
+      throw new SchemaError(`schema does not contain a property with the specified primaryKey: ${schema.primaryKey}`)
     }
     if (schema.properties[schema.primaryKey].type !== 'string') {
-      throw new Error('primary key needs to be of type string.')
+      throw new SchemaError('primary key needs to be of type string.')
     }
 
     this.schema = schema
+
+    // setup validator for model
+    const ajv = new Ajv({
+      useDefaults: true,
+      removeAdditional: true
+    })
+    this.ajvValidate = ajv.compile(this.schema)
   }
 
-  test(data: any) : object {
-    var result : any = {}
-    if (!_.has(data, this.schema.primaryKey) || _.isEmpty(data[this.schema.primaryKey])) {
-      throw new DataError('Schema requires a primary key.')
+  test(data: any) : Promise<object> {
+    data = _.cloneDeep(data)
+    const result = this.ajvValidate(data)
+    if (!result && this.ajvValidate.errors) {
+      const errors = this.ajvValidate.errors.map((val) => {
+        return val.dataPath + ' ' + val.message
+      })
+      throw new ValidationError(JSON.stringify(errors))
     }
-    Object.entries(this.schema.properties).forEach(([key, val]) => {
-      if (_.has(data, key)) {
-        if (getType(data[key]) !== val.type) {
-          throw new DataError(`${key} is of wrong type, should be ${val.type}.`)
-        }
-        result[key] = data[key]
-      } else if (this.schema.required && this.schema.required.includes(key)) {
-        throw new DataError(`${key} is empty, but is required in schema.`)
-      } else if (val.default) {
-        result[key] = val.default
-      }
-    })
-    return result
+    return data
   }
 }
 
-export { DataSchema, DataType, Validator, DataError }
+export { Validator, ValidationError, SchemaError, DataType }
+export type { DataSchema, DataSchemaProperty }

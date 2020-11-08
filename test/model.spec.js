@@ -17,7 +17,7 @@ function sleep(ms) {
 const apiAddress = 'http://test.com/api'
 const apiData = [ { id: '0', text: 'test1'}, {id: '1', text: 'test2' }, {id: '2', text: 'test3'} ] 
 const schema = {
-  title : 'testData',
+  $id : 'testData',
   properties: {
     id: { type: 'string'},
     text: { type : 'string'}
@@ -157,7 +157,7 @@ describe('DataModel API Call Tests', () => {
   it('should work with custom key', async () => {
     nock(apiAddress).get('/').reply(200, [ {title: 'test1', data: 'x'}, { title: 'test2', data: 'y'} ]);
     const model = new DataModel({ schema: {
-      title: 'test', 
+      $id: 'test', 
       properties : { 
         title : { type : 'string'}, 
         data : { type : 'string' }

@@ -1,13 +1,13 @@
 import _ from 'lodash';
 import React, { useEffect, useState, useContext} from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
-import { Api, Schema } from '../api';
+import { Api, DataSchema } from '../api';
 import { AppContext } from './App';
 import { HeaderView } from './HeaderView';
 import './styles/ModelView.scss'
 
 const ModelView = () => {
-  const [ model, setModel ] = useState<{ schema: Schema, data : any[] }>()
+  const [ model, setModel ] = useState<{ schema: DataSchema, data : any[] }>()
   const { modelName } = useParams<{modelName : string}>()
 
   const location = useLocation()

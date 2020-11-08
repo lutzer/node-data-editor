@@ -1,14 +1,14 @@
 import _ from 'lodash'
 import React, { useContext, useEffect, useState} from 'react'
 import { useLocation, useParams } from 'react-router-dom'
-import { Api, ApiException, Entry, Schema } from '../api'
+import { Api, ApiException, Entry, DataSchema } from '../api'
 import { AppContext } from './App'
 import { renderSchemaField } from './EditEntryView'
 import { HeaderView } from './HeaderView'
 import './styles/EntryView.scss'
 
 const CreateEntryView = ({ onNewEntry } : { onNewEntry : (res: Entry) => void}) => {
-  const [ schema, setSchema ] = useState<Schema|null>(null)
+  const [ schema, setSchema ] = useState<DataSchema|null>(null)
   const [ data, setData ] = useState<object>({})
   const { modelName } = useParams<{modelName : string}>()
   const { credentials, showModal, onAuthorizationError } = useContext(AppContext);
@@ -19,7 +19,7 @@ const CreateEntryView = ({ onNewEntry } : { onNewEntry : (res: Entry) => void}) 
     if (!modelName)
       return
     Api.getSchemas(credentials).then( (res) => {
-      setSchema(res.schemas.find( (s) => s.title === modelName) || null)
+      setSchema(res.schemas.find( (s) => s.id === modelName) || null)
     }).catch( (err : ApiException) => {
       if (err.statusCode === 401)
         onAuthorizationError(location.pathname)

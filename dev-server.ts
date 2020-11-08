@@ -1,5 +1,5 @@
 import { MemoryAdapter } from './src/adapter'
-import { DataSchema, DataType } from './dist/schema'
+import { DataSchema, DataType } from './src/schema'
 import { DataModel } from './src/model'
 import { startDataEditor } from './src/server'
 
@@ -7,7 +7,7 @@ const port = 3002
 
 const model1 : { schema: DataSchema, data : object[] } = {
   schema: {
-    title: 'foo',
+    id: 'foo',
     properties: {
       id: { type: DataType.string },
       text: { type: DataType.string, default: 'text' },
@@ -29,11 +29,11 @@ const model1 : { schema: DataSchema, data : object[] } = {
 
 const model2 : { schema: DataSchema, data : object[] } = {
   schema: {
-    title: 'bar',
+    id: 'bar',
     properties: {
       id: { type: DataType.string },
       text: { type: DataType.string },
-      number: { type: DataType.number },
+      number: { type: DataType.number, maximum: 10, minimum: 0 },
       boolean: { type: DataType.boolean },
       array: { type: DataType.array },
       object: { type: DataType.object }

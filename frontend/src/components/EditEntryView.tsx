@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import React, { useContext, useEffect, useState} from 'react'
 import { useLocation, useParams } from 'react-router-dom'
-import { Api, ApiException, Schema, SchemaProperty, Entry } from '../api'
+import { Api, ApiException, DataSchema, DataSchemaProperty, Entry } from '../api'
 import { AppContext } from './App'
 import { DeleteButton } from './DeleteButton'
 import { BooleanEditView, JsonEditorView, NumberEditView, TextEditView } from './EditViews'
@@ -10,7 +10,7 @@ import './styles/EntryView.scss'
 
 
 function renderSchemaField( { key, property, value, onChange } : 
-  {key : string, property : SchemaProperty, value? : any, onChange : (key : string, val: any) => void}) 
+  {key : string, property : DataSchemaProperty, value? : any, onChange : (key : string, val: any) => void}) 
 {
   if (property.type === 'string')
     return(
@@ -68,7 +68,7 @@ function renderSchemaField( { key, property, value, onChange } :
 }
 
 const EditEntryView = ({onUpdatedEntry} : { onUpdatedEntry : (res : Entry) => void}) => {
-  const [ entry, setEntry ] = useState<{schema: Schema, data: any}|null>(null)
+  const [ entry, setEntry ] = useState<{schema: DataSchema, data: any}|null>(null)
   const [ changes, setChanges ] = useState<object>({})
   const { modelName, entryId } = useParams<{modelName : string, entryId: string}>()
   const { credentials, showModal, onAuthorizationError } = useContext(AppContext);

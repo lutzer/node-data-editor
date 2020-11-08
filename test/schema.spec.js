@@ -1,7 +1,9 @@
 const chai = require('chai');
 const _ = require('lodash')
+const chaiAsPromised = require('chai-as-promised')
 
 const expect = chai.expect
+chai.use(chaiAsPromised)
 
 const { Validator } = require('./../dist/schema')
 
@@ -9,10 +11,10 @@ describe('Schema Tests', () => {
 
   it('should create a correct validator', async () => {
     const schema = {
-      title: 'test',
+      $id: 'test',
       properties: {
         id: { type: 'string', default: '0'},
-        text: { type : 'string', required : true, default: 'nothing' }
+        text: { type : 'string', default: 'nothing' }
       },
       primaryKey : 'id'
     }
@@ -22,7 +24,7 @@ describe('Schema Tests', () => {
 
   it('should not create a validator with invalid type', async () => {
     const schema = {
-      title: 'test',
+      $id: 'test',
       properties: {
         id: { type: 'horse'},
         text: { type : 'string'}
@@ -34,7 +36,7 @@ describe('Schema Tests', () => {
 
   it('should not create a validator with invalid required value', async () => {
     const schema = {
-      title: 'test',
+      $id: 'test',
       properties: {
         id: { type: 'number'},
         text: { type : 'string'}
@@ -47,7 +49,7 @@ describe('Schema Tests', () => {
 
   it('should not create a validator with invalid default value', async () => {
     const schema = {
-      title: 'test',
+      $id: 'test',
       properties: {
         id: { type: 'number', default: 'peter' },
         text: { type : 'string'}
@@ -59,7 +61,7 @@ describe('Schema Tests', () => {
 
   it('should validate correct schema', async () => {
     const schema = {
-      title: 'test',
+      $id: 'test',
       properties: {
         id: { type: 'string' },
         text: { type: 'string' },
@@ -83,19 +85,19 @@ describe('Schema Tests', () => {
 
   it('should throw error on validating incorrect schema', async () => {
     const schema = {
-      title: 'test',
+      $id: 'test',
       properties: {
         id: { type: 'string' }
       },
       primaryKey : 'id'
     }
     const validator = new Validator(schema)
-    expect( () => validator.test({ id : 0}) ).to.throw()
+    expect(() => validator.test({ id : 0})).to.throw()
   });
 
   it('validation should throw error if required value is not supplied', async () => {
     const schema = {
-      title: 'test',
+      $id: 'test',
       properties: {
         id: { type: 'string' },
         text: { type: 'string' }
@@ -109,7 +111,7 @@ describe('Schema Tests', () => {
 
   it('validation should set default value if its not supplied for string', async () => {
     const schema = {
-      title: 'test',
+      $id: 'test',
       properties: {
         id: { type: 'string' },
         text: { type: 'string', default : 'test' }
@@ -121,9 +123,23 @@ describe('Schema Tests', () => {
     expect(result.text).to.be.equal('test')
   });
 
+  it.skip('validation should set default value if data provides empty string', async () => {
+    const schema = {
+      $id: 'test',
+      properties: {
+        id: { type: 'string' },
+        text: { type: 'string', default : 'test' }
+      },
+      primaryKey : 'id'
+    }
+    const validator = new Validator(schema)
+    const result = validator.test({id : '3', text: ''})
+    expect(result.text).to.be.equal('test')
+  });
+
   it('validation should set default value if its not supplied for array', async () => {
     const schema = {
-      title: 'test',
+      $id: 'test',
       properties: {
         id: { type: 'string' },
         list: { type: 'array', default : [1,2,3] }

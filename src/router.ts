@@ -42,7 +42,7 @@ apiRouter.get('/', async (basectx : Koa.DefaultContext) => {
 apiRouter.get('/:model', async (basectx : Koa.DefaultContext) => {
   const context : AppContext = <AppContext>basectx
   try {
-    const model = context.models.find((model) => model.schema.title === context.params.model)
+    const model = context.models.find((model) => model.schema.$id === context.params.model)
     if (!model) {
       throw new ApiError(400, `model ${context.params.model} does not exist.`)
     }
@@ -56,7 +56,7 @@ apiRouter.get('/:model', async (basectx : Koa.DefaultContext) => {
 apiRouter.get('/:model/:id', async (basectx : Koa.DefaultContext) => {
   const context : AppContext = <AppContext>basectx
   try {
-    const model = context.models.find((model) => model.schema.title === context.params.model)
+    const model = context.models.find((model) => model.schema.$id === context.params.model)
     if (!model) {
       throw new ApiError(400, `model ${context.params.model} does not exist.`)
     }
@@ -70,7 +70,7 @@ apiRouter.get('/:model/:id', async (basectx : Koa.DefaultContext) => {
 apiRouter.delete('/:model/:id', async (basectx : Koa.DefaultContext) => {
   const context : AppContext = <AppContext>basectx
   try {
-    const model = context.models.find((model) => model.schema.title === context.params.model)
+    const model = context.models.find((model) => model.schema.$id === context.params.model)
     if (!model) {
       throw new ApiError(400, `model ${context.params.model} does not exist.`)
     }
@@ -89,7 +89,7 @@ apiRouter.delete('/:model/:id', async (basectx : Koa.DefaultContext) => {
 apiRouter.post('/:model/', bodyParser(), async (basectx : Koa.DefaultContext) => {
   const context : AppContext = <AppContext>basectx
   try {
-    const model = context.models.find((model) => model.schema.title === context.params.model)
+    const model = context.models.find((model) => model.schema.$id === context.params.model)
     if (!model) {
       throw new ApiError(400, `model ${context.params.model} does not exist.`)
     }
@@ -104,7 +104,7 @@ apiRouter.post('/:model/', bodyParser(), async (basectx : Koa.DefaultContext) =>
 apiRouter.put('/:model/:id', bodyParser(), async (basectx : Koa.DefaultContext) => {
   const context : AppContext = <AppContext>basectx
   try {
-    const model = context.models.find((model) => model.schema.title === context.params.model)
+    const model = context.models.find((model) => model.schema.$id === context.params.model)
     if (!model) {
       throw new ApiError(400, `model ${context.params.model} does not exist.`)
     }

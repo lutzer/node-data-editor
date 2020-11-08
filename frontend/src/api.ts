@@ -1,5 +1,6 @@
 import base64 from 'base-64'
 import { config } from './config'
+import { DataSchema, DataSchemaProperty } from './../../src/schema'
 
 class ApiException extends Error {
 
@@ -17,28 +18,13 @@ function generateAuthHeader(name: string, password: string) : { Authorization : 
   }
 }
 
-type SchemaProperty = {
-  type : string
-  default? : any
-  maxLength? : number
-  minimum?: number,
-  maximum?: number,
-}
-
-type Schema = {
-  title: string
-  properties: { [key : string] : SchemaProperty}
-  primaryKey : string
-  required : string[]
-}
-
 type Credentials = {
   login : string
   password : string
 }
 
 type Entry = {
-  schema: Schema,
+  schema: DataSchema,
   data : any
 }
 
@@ -48,7 +34,7 @@ class Api {
     await this.getSchemas(credentials)
   }
 
-  static async getSchemas(credentials? : Credentials) : Promise<{ schemas: Schema[]}> {
+  static async getSchemas(credentials? : Credentials) : Promise<{ schemas: DataSchema[]}> {
     let response = await fetch(config.apiAdress + '/', {
       method: 'GET',
       headers: Object.assign({},{
@@ -61,8 +47,8 @@ class Api {
     return json
   }
 
-  static async getModel(modelName: string, credentials? : Credentials) : Promise<{ schema: Schema, data: any[]}> {
-    let response = await fetch(config.apiAdress + '/' + modelName, {
+  static async getModel(modelId: string, credentials? : Credentials) : Promise<{ schema: DataSchema, data: any[]}> {
+    let response = await fetch(config.apiAdress + '/' + modelId, {
       method: 'GET',
       headers: Object.assign({},{
         'Content-Type': 'application/json'
@@ -74,8 +60,8 @@ class Api {
     return json
   }
 
-  static async getEntry(modelName: string, entryId : string, credentials? : Credentials) : Promise<{schema: Schema, data: any}> {
-    let response = await fetch(config.apiAdress + `/${modelName}/${entryId}` , {
+  static async getEntry(modelId: string, entryId : string, credentials? : Credentials) : Promise<{schema: DataSchema, data: any}> {
+    let response = await fetch(config.apiAdress + `/${modelId}/${entryId}` , {
       method: 'GET',
       headers: Object.assign({},{
         'Content-Type': 'application/json'
@@ -87,8 +73,8 @@ class Api {
     return json
   }
 
-  static async deleteEntry(modelName: string, entryId : string, credentials? : Credentials) : Promise<void> {
-    let response = await fetch(config.apiAdress + `/${modelName}/${entryId}` , {
+  static async deleteEntry(modelId: string, entryId : string, credentials? : Credentials) : Promise<void> {
+    let response = await fetch(config.apiAdress + `/${modelId}/${entryId}` , {
       method: 'DELETE',
       headers: Object.assign({},credentials && generateAuthHeader(credentials.login, credentials.password))
     })
@@ -96,8 +82,8 @@ class Api {
       throw new ApiException(response.status, response.statusText)
   }
 
-  static async updateEntry(modelName: string, entryId : string, data: any, credentials? : Credentials) : Promise<Entry> {
-    let response = await fetch(config.apiAdress + `/${modelName}/${entryId}` , {
+  static async updateEntry(modelId: string, entryId : string, data: any, credentials? : Credentials) : Promise<Entry> {
+    let response = await fetch(config.apiAdress + `/${modelId}/${entryId}` , {
       method: 'PUT',
       body: JSON.stringify(data),
       headers: Object.assign({},{
@@ -110,8 +96,8 @@ class Api {
     return json
   }
 
-  static async createEntry(modelName: string, data: object, credentials: Credentials) : Promise<Entry> {
-    let response = await fetch(config.apiAdress + `/${modelName}/` , {
+  static async createEntry(modelId: string, data: object, credentials: Credentials) : Promise<Entry> {
+    let response = await fetch(config.apiAdress + `/${modelId}/` , {
       method: 'POST',
       body: JSON.stringify(data),
       headers: Object.assign({},{
@@ -134,4 +120,4 @@ function getCredentials() : Credentials {
 }
 
 export { Api, ApiException, setCredentials, getCredentials }
-export type { Schema, SchemaProperty, Entry, Credentials }
+export type { DataSchema, DataSchemaProperty, Entry, Credentials }

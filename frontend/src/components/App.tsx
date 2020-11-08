@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Switch, Route, useHistory, Redirect } from "react-router-dom";
-import { Api, ApiException, Credentials, Entry, Schema } from '../api';
+import { Api, ApiException, Credentials, Entry, DataSchema } from '../api';
 import { EditEntryView } from './EditEntryView';
 import { ModelList } from './ModelList';
 import { ModelView } from './ModelView';
@@ -22,7 +22,7 @@ const AppContext = React.createContext<AppContextType>({
 });
 
 function App() {
-  const [schemas, setSchemas] = useState<Schema[]>([])
+  const [schemas, setSchemas] = useState<DataSchema[]>([])
   const [modal, setModal] = useState<ModalProperties|null>(null)
   const [credentials, setCredentials] = useState<Credentials>({ login: '', password: '' })
   const [prevPath, setPrevPath ] = useState<string>('/models')
@@ -78,7 +78,7 @@ function App() {
   // }
 
   function onUpdate(entry : Entry, newEntry : boolean = false) {
-    history.push(`/models/${entry.schema.title}/${entry.data[entry.schema.primaryKey]}`)
+    history.push(`/models/${entry.schema.id}/${entry.data[entry.schema.primaryKey]}`)
     if (newEntry)
       showModal('Created', 'Entry was created.' )
     else

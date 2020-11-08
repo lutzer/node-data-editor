@@ -1,10 +1,12 @@
 import { Adapter } from './adapter'
-import { DataError, DataSchema, Validator } from './schema'
+import { DataSchema, Validator } from './schema'
 import { keyEquals } from './utils'
 
 enum Operation {
   create, change, delete
 }
+
+class ModelError extends Error {}
 
 class DataModel {
   adapter : Adapter
@@ -34,17 +36,17 @@ class DataModel {
     })
   }
 
-  create(data : any) : object {
+  create(data : any) : Promise<object> {
     data = this.validator.test(data)
     this._data.push(data)
     this._changedDataEntries.push({ id: data[this.schema.primaryKey], op: Operation.create })
     return data
   }
 
-  update(id : string, data : any) : object {
+  update(id : string, data : any) : Promise<object> {
     const index = this._data.findIndex((ele : any) => keyEquals(ele[this.schema.primaryKey], id))
     if (index < 0) {
-      throw new DataError('Entry cannot be updated, because it does not exist.')
+      throw new ModelError('Entry cannot be updated, because it does not exist.')
     }
     // merge data
     data = this.validator.test(Object.assign({}, this._data[index], data))
