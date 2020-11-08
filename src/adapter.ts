@@ -55,7 +55,7 @@ class MemoryAdapter extends Adapter {
 
   constructor(data : object[], primaryKey : string = 'id') {
     super()
-    this.data = data
+    this.data = _.cloneDeep(data)
     this.key = primaryKey
   }
 

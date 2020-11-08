@@ -7,12 +7,11 @@ const expect = chai.expect
 chai.use(chaiAsPromised)
 
 const { RestAdapter, MemoryAdapter } = require('./../dist/adapter');
-const { isPrimitive } = require('util');
 
 describe('RestAdapter Tests', () => {
 
   const apiAddress = 'http://test.com/api'
-  const apiData = [ { id: 1}, {id: 2}, {id: 3} ]
+  const apiData = [ { id: '1'}, {id: '2'}, {id: '3'} ]
 
   it('list() should return api data', async () => {
     nock(apiAddress).get('/').reply(200, apiData);
@@ -58,7 +57,7 @@ describe('RestAdapter Tests', () => {
 
 describe('Memory Adapter Tests', () => {
 
-  const apiData = [ { id: 1}, {id: 2}, {id: 3} ]
+  const apiData = [ { id: '1'}, {id: '2'}, {id: '3'} ]
 
   function createAdapter() {
     return new MemoryAdapter(apiData, 'id')
@@ -83,8 +82,9 @@ describe('Memory Adapter Tests', () => {
 
   it('create() should make a succesfull request', async () => {
     const adapter = createAdapter()
-    await adapter.create({ id: 5})
-    expect(adapter.data).is.lengthOf(apiData.length + 1)
+    const prevSize = adapter.data.length
+    await adapter.create({ id: '5'})
+    expect(adapter.data).is.lengthOf(prevSize+1)
   });
 
   it('update() should make a succesfull request', async () => {

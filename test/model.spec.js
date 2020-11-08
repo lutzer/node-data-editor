@@ -19,8 +19,8 @@ const apiData = [ { id: '0', text: 'test1'}, {id: '1', text: 'test2' }, {id: '2'
 const schema = {
   $id : 'testData',
   properties: {
-    id: { type: 'string'},
-    text: { type : 'string'}
+    id: { type: 'string' },
+    text: { type : 'string' }
   },
   primaryKey : 'id'
 }
@@ -32,7 +32,7 @@ describe('DataModel Tests', () => {
       { id: '0', text: 'foo'},
       { id: '1', text: 'foo'},
       { id: '2', text: 'foo'},
-    ])})
+    ],'id')})
   }
 
   
@@ -104,7 +104,7 @@ describe('DataModel Tests', () => {
   it('should be able to update entry', async () => {
     const model = createModel()
     await model.fetch()
-    await model.update(0, { id: '5', text: 'changed'})
+    await model.update('0', { id: '5', text: 'changed'})
     await model.sync()
     await model.fetch()
     expect(model.get(5)).to.deep.equal({ id: '5', text :'changed'})
@@ -113,11 +113,11 @@ describe('DataModel Tests', () => {
   it('should be able to update entry multiple times', async () => {
     const model = createModel()
     await model.fetch()
-    await model.update(0, { id: '5', text: 'changed'})
-    await model.update(5, { id: '7', text: 'changed2'})
+    await model.update('0', { id: '5', text: 'changed'})
+    await model.update('5', { id: '7', text: 'changed2'})
     await model.sync()
     await model.fetch()
-    expect(model.get(7)).to.deep.equal({ id: '7', text :'changed2'})
+    expect(model.get('7')).to.deep.equal({ id: '7', text :'changed2'})
   })
 
   it('should be able to create a new entry', async () => {

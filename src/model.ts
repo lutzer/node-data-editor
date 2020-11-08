@@ -12,7 +12,7 @@ class DataModel {
   adapter : Adapter
   validator : Validator
 
-  private _changedDataEntries : { id: string, previousId? : string, op: Operation }[]
+  private _changedDataEntries : { id: string, data? : any, op: Operation }[]
   private _data : any[]
 
   constructor({ schema, adapter } : { schema : DataSchema, adapter : Adapter, key? : string }) {
@@ -51,7 +51,7 @@ class DataModel {
     // merge data
     data = this.validator.test(Object.assign({}, this._data[index], data))
     this._data[index] = data
-    this._changedDataEntries.push({ id: this._data[index][this.schema.primaryKey], previousId: id, op: Operation.change })
+    this._changedDataEntries.push({ id: id, data: data, op: Operation.change })
     return this._data[index]
   }
 
@@ -73,8 +73,8 @@ class DataModel {
     for (const entry of this._changedDataEntries) {
       if (entry.op === Operation.delete) {
         await this.adapter.delete(entry.id)
-      } else if (entry.op === Operation.change && entry.previousId) {
-        await this.adapter.update(entry.previousId, this.get(entry.id))
+      } else if (entry.op === Operation.change && entry.data) {
+        await this.adapter.update(entry.id, entry.data)
       } else if (entry.op === Operation.create) {
         await this.adapter.create(this.get(entry.id))
       }

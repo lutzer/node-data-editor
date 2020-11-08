@@ -10,14 +10,15 @@ A customizable data editor for node, using JSON schema. By using custom Data Ada
   serveEditor({
     models: [new DataModel({
       schema: {
-        title: 'test',
+        $id: 'Persons',
         properties: {
           id: { type: 'string' },
-          text: { type: 'string' },
-          number: { type: 'number' }
+          name: { type: 'string' }
+          siblings: { type: 'array' },
+          age: { type: 'number', default: 0 }
         },
         primaryKey: 'id',
-        required: ['text', 'number']
+        required: ['id']
       },
       adapter: new MemoryAdapter([], 'id')
     })],
@@ -26,10 +27,11 @@ A customizable data editor for node, using JSON schema. By using custom Data Ada
 ```
 
 ## Schema Description
+The Schma definitions follow [JSON Schema](https://json-schema.org/). It needs to contain a primaryKey property of a type string, itentified by the 'primaryKey' field. The Editor currently does not support nested properties, just the base Datatypes.
 ```
-  // Datatypes: 'string'|'number'|'boolean'|'object'|'array
+  // Datatypes can be: 'string','number','boolean','object' or 'array
   {
-    title: string,
+    $id: string,
     properties: { [key : string] : {
       type : DataType
       default? : any
@@ -39,10 +41,10 @@ A customizable data editor for node, using JSON schema. By using custom Data Ada
   }
 ```
 
-### Schema Examples
+### Schema Example
 ```
 {
-  "title": "Book",
+  "$id": "Book",
   "properties": {
     "id": {
       "type": "string"

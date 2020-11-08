@@ -1,7 +1,7 @@
 import { MemoryAdapter } from './src/adapter'
 import { DataSchema, DataType } from './src/schema'
 import { DataModel } from './src/model'
-import { startDataEditor } from './src/server'
+import { startEditor } from './src/server'
 
 const port = 3002
 
@@ -49,7 +49,7 @@ const model2 : { schema: DataSchema, data : object[] } = {
   ]
 }
 
-startDataEditor({
+startEditor({
   models: [
     new DataModel({
       schema: model1.schema,
