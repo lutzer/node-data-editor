@@ -78,7 +78,7 @@ function App() {
   // }
 
   function onUpdate(entry : Entry, newEntry : boolean = false) {
-    history.push(`/models/${entry.schema.id}/${entry.data[entry.schema.primaryKey]}`)
+    history.push(`/models/${entry.schema.$id}/${entry.data[entry.schema.primaryKey]}`)
     if (newEntry)
       showModal('Created', 'Entry was created.' )
     else

@@ -19,7 +19,7 @@ const CreateEntryView = ({ onNewEntry } : { onNewEntry : (res: Entry) => void}) 
     if (!modelName)
       return
     Api.getSchemas(credentials).then( (res) => {
-      setSchema(res.schemas.find( (s) => s.id === modelName) || null)
+      setSchema(res.schemas.find( (s) => s.$id === modelName) || null)
     }).catch( (err : ApiException) => {
       if (err.statusCode === 401)
         onAuthorizationError(location.pathname)

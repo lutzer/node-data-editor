@@ -97,7 +97,7 @@ const NumberEditView = ({label, value, min, max, onChange} :
     <div className='input-wrapper'>
       <label>{label}</label>
       <div className={'input-element' + (changed ? ' changed' : '')}>
-        <input type='number' max={max} min={min} value={current || ''} onChange={(e) => setCurrent(_.toNumber(e.target.value))}/>
+        <input type='number' max={max} min={min} value={_.isNumber(current) ? current : undefined} onChange={(e) => setCurrent(_.toNumber(e.target.value))}/>
       </div>
     </div>
   )

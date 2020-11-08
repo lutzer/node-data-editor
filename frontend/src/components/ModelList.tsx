@@ -13,7 +13,7 @@ const ModelList = ({schemas} : {schemas : DataSchema[]}) => {
         { 
         schemas.map( (schema : DataSchema, i) => {
           return(
-            <li key={i}><Link to={`/models/${schema.id}`}>{schema.id}</Link></li>
+            <li key={i}><Link to={`/models/${schema.$id}`}>{schema.$id}</Link></li>
           )
         })
         }

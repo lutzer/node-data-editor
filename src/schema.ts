@@ -25,6 +25,7 @@ type DataSchemaProperty = {
   maxLength? : number
   minimum?: number,
   maximum?: number,
+  minLength? : number
 }
 
 type DataSchema = {
@@ -77,7 +78,9 @@ class Validator {
     if (!_.has(schema, 'primaryKey')) {
       throw new SchemaError('Schema needs to specify a primaryKey')
     }
-    if (!_.has(schema, `properties.${schema.primaryKey}`)) {
+    if (_.has(schema, `properties.${schema.primaryKey}`)) {
+      schema.properties[schema.primaryKey].minLength = 1
+    } else {
       throw new SchemaError(`schema does not contain a property with the specified primaryKey: ${schema.primaryKey}`)
     }
     if (schema.properties[schema.primaryKey].type !== 'string') {
@@ -97,10 +100,10 @@ class Validator {
   test(data: any) : Promise<object> {
     data = _.cloneDeep(data)
     const result = this.ajvValidate(data)
-    if (!result && this.ajvValidate.errors) {
-      const errors = this.ajvValidate.errors.map((val) => {
-        return val.dataPath + ' ' + val.message
-      })
+    if (!result) {
+      const errors = this.ajvValidate.errors
+        ? this.ajvValidate.errors.map((val) => val.dataPath + ' ' + val.message)
+        : []
       throw new ValidationError(JSON.stringify(errors))
     }
     return data

@@ -7,7 +7,7 @@ const port = 3002
 
 const model1 : { schema: DataSchema, data : object[] } = {
   schema: {
-    id: 'foo',
+    $id: 'foo',
     properties: {
       id: { type: DataType.string },
       text: { type: DataType.string, default: 'text' },
@@ -29,7 +29,7 @@ const model1 : { schema: DataSchema, data : object[] } = {
 
 const model2 : { schema: DataSchema, data : object[] } = {
   schema: {
-    id: 'bar',
+    $id: 'bar',
     properties: {
       id: { type: DataType.string },
       text: { type: DataType.string },

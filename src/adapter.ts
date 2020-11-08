@@ -55,17 +55,17 @@ class MemoryAdapter extends Adapter {
 
   constructor(data : object[], primaryKey : string = 'id') {
     super()
-    this.data = _.cloneDeep(data)
+    this.data = data
     this.key = primaryKey
   }
 
-  async list() {
-    return this.data
+  async list() : Promise<object[]> {
+    return _.cloneDeep(this.data)
   }
 
-  async read(id : string) {
+  async read(id : string) : Promise<object|null> {
     const val = this.data.find((ele : any) => keyEquals(ele[this.key], id))
-    return val || null
+    return _.cloneDeep(val || null)
   }
 
   async delete(id : string) {
@@ -78,9 +78,9 @@ class MemoryAdapter extends Adapter {
     this.data = this.data.filter((ele : any) => !keyEquals(ele[this.key], id))
   }
 
-  async create(data: object) {
+  async create(data: object) : Promise<object> {
     this.data.push(data)
-    return data
+    return _.cloneDeep(data)
   }
 
   async update(id : string, data : object) {

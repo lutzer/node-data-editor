@@ -151,4 +151,16 @@ describe('Schema Tests', () => {
     expect(result.list).to.deep.equal([1,2,3])
   });
 
+  it('validation should not allow empty string as primaryKey', async () => {
+    const schema = {
+      $id: 'test',
+      properties: {
+        id: { type: 'string' }
+      },
+      primaryKey : 'id'
+    }
+    const validator = new Validator(schema)
+    expect( () => validator.test({ id : ''}) ).to.throw()
+  });
+
 }); 
