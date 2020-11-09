@@ -1,8 +1,9 @@
 {
   "name": "node-data-editor",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "a simple data editor for node, based on json schema with a customziable data adapter structure.",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "dev": "npx ts-node-dev dev-server.ts -- -dev",
     "test": "npx tsc && npx mocha test/*.spec.js",

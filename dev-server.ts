@@ -1,20 +1,18 @@
-import { MemoryAdapter } from './src/adapter'
-import { DataSchema, DataType } from './src/schema'
-import { DataModel } from './src/model'
-import { startEditor } from './src/server'
+import * as DataEditor from './src/index'
+// const DataEditor = require('./src/index')
 
 const port = 3002
 
-const model1 : { schema: DataSchema, data : object[] } = {
+const model1 : { schema: DataEditor.DataSchema, data : object[] } = {
   schema: {
     $id: 'foo',
     properties: {
-      id: { type: DataType.string },
-      text: { type: DataType.string, default: 'text' },
-      number: { type: DataType.number, default: 0 },
-      boolean: { type: DataType.boolean, default: false },
-      array: { type: DataType.array, default: [1, 2, 3] },
-      object: { type: DataType.object }
+      id: { type: 'string' },
+      text: { type: 'string', default: 'text' },
+      number: { type: 'number', default: 0 },
+      boolean: { type: 'boolean', default: false },
+      array: { type: 'array', default: [1, 2, 3] },
+      object: { type: 'object' }
     },
     primaryKey: 'id',
     required: ['text']
@@ -27,16 +25,16 @@ const model1 : { schema: DataSchema, data : object[] } = {
   ]
 }
 
-const model2 : { schema: DataSchema, data : object[] } = {
+const model2 : { schema: any, data : object[] } = {
   schema: {
     $id: 'bar',
     properties: {
-      id: { type: DataType.string },
-      text: { type: DataType.string },
-      number: { type: DataType.number, maximum: 10, minimum: 0 },
-      boolean: { type: DataType.boolean },
-      array: { type: DataType.array },
-      object: { type: DataType.object }
+      id: { type: 'string' },
+      text: { type: 'string' },
+      number: { type: 'number', maximum: 10, minimum: 0 },
+      boolean: { type: 'boolean' },
+      array: { type: 'array' },
+      object: { type: 'object' }
     },
     primaryKey: 'id',
     required: ['text', 'number']
@@ -49,15 +47,15 @@ const model2 : { schema: DataSchema, data : object[] } = {
   ]
 }
 
-startEditor({
+DataEditor.start({
   models: [
-    new DataModel({
+    new DataEditor.DataModel({
       schema: model1.schema,
-      adapter: new MemoryAdapter(model1.data, model1.schema.primaryKey)
+      adapter: new DataEditor.MemoryAdapter(model1.data, model1.schema.primaryKey)
     }),
-    new DataModel({
+    new DataEditor.DataModel({
       schema: model2.schema,
-      adapter: new MemoryAdapter(model2.data, model2.schema.primaryKey)
+      adapter: new DataEditor.MemoryAdapter(model2.data, model2.schema.primaryKey)
     })
   ],
   port: port
@@ -67,6 +65,6 @@ startEditor({
   // }
 }).then(async () => {
   console.info('Server listening on port ' + port)
-}).catch((err) => {
+}).catch((err : any) => {
   console.log(err)
 })

@@ -9,7 +9,7 @@ chai.use(chaiHttp)
 
 const { MemoryAdapter } = require('./../dist/adapter')
 const { DataModel } = require('./../dist/model');
-const { startEditor } = require('./../dist/server')
+const { start } = require('./../dist/server')
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
@@ -43,7 +43,7 @@ describe('Api Route Tests', () => {
 
   beforeEach( async () => {
     model = createModel()
-    server = await startEditor({ 
+    server = await start({ 
       models: [model], 
       port: 3002, 
       credentials : credentials

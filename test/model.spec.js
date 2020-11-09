@@ -115,9 +115,13 @@ describe('DataModel Tests', () => {
     await model.fetch()
     await model.update('0', { id: '5', text: 'changed'})
     await model.update('5', { id: '7', text: 'changed2'})
+    await model.update('7', { id: '8', text: 'changed3'})
     await model.sync()
     await model.fetch()
-    expect(model.get('7')).to.deep.equal({ id: '7', text :'changed2'})
+    expect(model.get('0')).to.be.undefined
+    expect(model.get('5')).to.be.undefined
+    expect(model.get('7')).to.be.undefined
+    expect(model.get('8')).to.deep.equal({ id: '8', text :'changed3'})
   })
 
   it('should be able to create a new entry', async () => {

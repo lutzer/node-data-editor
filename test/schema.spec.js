@@ -151,7 +151,7 @@ describe('Schema Tests', () => {
     expect(result.list).to.deep.equal([1,2,3])
   });
 
-  it('validation should not allow empty string as primaryKey', async () => {
+  it.skip('validation should not allow empty string as primaryKey', async () => {
     const schema = {
       $id: 'test',
       properties: {

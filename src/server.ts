@@ -10,7 +10,7 @@ interface AppContext extends Koa.DefaultContext {
   credentials : Credentials | null
 }
 
-const startEditor = function({ models, port = 3002, credentials } : {
+const start = function({ models, port = 3002, credentials } : {
   models : DataModel[],
   port? : number,
   credentials?: Credentials
@@ -30,4 +30,4 @@ const startEditor = function({ models, port = 3002, credentials } : {
   })
 }
 
-export { startEditor, AppContext }
+export { start, AppContext }

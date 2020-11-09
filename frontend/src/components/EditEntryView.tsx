@@ -12,7 +12,8 @@ import './styles/EntryView.scss'
 function renderSchemaField( { key, property, value, onChange } : 
   {key : string, property : DataSchemaProperty, value? : any, onChange : (key : string, val: any) => void}) 
 {
-  if (property.type === 'string')
+  const propertyType = _.isArray(property.type) ? property.type[0] : property.type
+  if (propertyType === 'string')
     return(
       <div className='edit-field'>
         <TextEditView 
@@ -22,7 +23,7 @@ function renderSchemaField( { key, property, value, onChange } :
           onChange={(v)=> onChange(key,v)}/>
       </div>
     ) 
-  else if (property.type === 'boolean')
+  else if (propertyType === 'boolean')
     return(
       <div className='edit-field'>
         <BooleanEditView 
@@ -30,7 +31,7 @@ function renderSchemaField( { key, property, value, onChange } :
           onChange={(v)=> onChange(key,v)}/>
       </div>
     )
-  else if (property.type === 'number')
+  else if (propertyType === 'number')
     return(
       <div className='edit-field'>
         <NumberEditView 
@@ -41,7 +42,7 @@ function renderSchemaField( { key, property, value, onChange } :
           onChange={(v)=> onChange(key,v)}/>
       </div>
     )
-  else if (property.type === 'object')
+  else if (propertyType === 'object')
     return(
       <div className='edit-field'>
         <JsonEditorView 
@@ -50,7 +51,7 @@ function renderSchemaField( { key, property, value, onChange } :
           onChange={(v)=> onChange(key,v)}/>
       </div>
     )
-  else if (property.type === 'array')
+  else if (propertyType === 'array')
     return(
       <div className='edit-field'>
         <JsonEditorView 

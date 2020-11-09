@@ -1,41 +1,22 @@
 import _ from 'lodash'
 import Ajv from 'ajv'
 
-// type DataType = 'string' | 'number' | 'boolean' | 'object' | 'array'
-enum DataType {
-  string = 'string',
-  number = 'number',
-  boolean = 'boolean',
-  object = 'object',
-  array = 'array'
-}
-
-const getType = function(val : any) : string {
-  if (_.isArray(val)) return 'array'
-  if (_.isObject(val)) return 'object'
-  if (_.isNumber(val)) return 'number'
-  if (_.isBoolean(val)) return 'boolean'
-  if (_.isString(val)) return 'string'
-  else return 'undefined'
-}
+type DataType = 'string' | 'number' | 'boolean' | 'object' | 'array' | 'null'
 
 type DataSchemaProperty = {
-  type : DataType
+  type : DataType|DataType[]
   default? : any
-  maxLength? : number
-  minimum?: number,
-  maximum?: number,
-  minLength? : number
+  [x: string] : any
 }
 
 type DataSchema = {
-  $id: string,
-  type? : string,
-  additionalProperties? : boolean,
-  properties: { [key : string] : DataSchemaProperty },
-  primaryKey: string,
-  required? : string[],
-  links? : { rel : string, href : string }[],
+  $id: string
+  type? : string
+  additionalProperties? : boolean
+  properties: { [key : string] : DataSchemaProperty }
+  primaryKey: string
+  required? : string[]
+  links? : { rel : string, href : string }[]
 }
 
 class SchemaError extends Error {}
@@ -59,15 +40,6 @@ class Validator {
       throw new SchemaError('Schema needs to specify one or more properties')
     }
 
-    Object.entries(schema.properties).forEach(([key, val]) => {
-      if (!_.has(val, 'type') || !(val.type in DataType)) {
-        throw new SchemaError(`Schema does not specify a correct type of ${key}.`)
-      }
-      if (_.has(val, 'default') && getType(val.default) !== val.type) {
-        throw new SchemaError(`Schema does not specify a default value with the correct type of ${key}.`)
-      }
-    })
-
     schema.required.forEach((val) => {
       if (!Object.keys(schema.properties).includes(val)) {
         throw new SchemaError(`required key ${val} does not exist in properties.`)
@@ -78,9 +50,7 @@ class Validator {
     if (!_.has(schema, 'primaryKey')) {
       throw new SchemaError('Schema needs to specify a primaryKey')
     }
-    if (_.has(schema, `properties.${schema.primaryKey}`)) {
-      schema.properties[schema.primaryKey].minLength = 1
-    } else {
+    if (!_.has(schema, `properties.${schema.primaryKey}`)) {
       throw new SchemaError(`schema does not contain a property with the specified primaryKey: ${schema.primaryKey}`)
     }
     if (schema.properties[schema.primaryKey].type !== 'string') {
@@ -110,5 +80,5 @@ class Validator {
   }
 }
 
-export { Validator, ValidationError, SchemaError, DataType }
-export type { DataSchema, DataSchemaProperty }
+export { Validator, ValidationError, SchemaError }
+export type { DataSchema, DataSchemaProperty, DataType }
