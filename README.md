@@ -9,7 +9,12 @@ npm install node-data-editor
 ## Usage
 
 ### Import
-`import * as DataEditor from './src/index'` or `const DataEditor = require('./src/index')`
+
+```
+import * as DataEditor from './src/index'
+or
+const DataEditor = require('./src/index')
+```
 
 ### basic example
 ```javascript

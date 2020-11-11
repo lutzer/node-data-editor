@@ -16,7 +16,7 @@ type DataSchema = {
   properties: { [key : string] : DataSchemaProperty }
   primaryKey: string
   required? : string[]
-  links? : { rel : string, href : string }[]
+  links? : { model : string, foreignKey : string }[]
 }
 
 class SchemaError extends Error {}

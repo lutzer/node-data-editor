@@ -15,7 +15,10 @@ const model1 : { schema: DataEditor.DataSchema, data : object[] } = {
       object: { type: 'object' }
     },
     primaryKey: 'id',
-    required: ['text']
+    required: ['text'],
+    links: [
+      { model: 'bar', foreignKey: 'fooId' }
+    ]
   },
   data: [
     { id: '0', text: 'lorem', number: 42, boolean: true, array: [1, 2, 3], object: { x: 5 } },

@@ -88,4 +88,4 @@ class MemoryAdapter extends Adapter {
   }
 }
 
-export { Adapter, RestAdapter, MemoryAdapter }
+export { Adapter, RestAdapter, MemoryAdapter, AdapterError }
