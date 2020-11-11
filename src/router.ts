@@ -1,4 +1,5 @@
 import Koa from 'koa'
+// @ts-ignore
 import Router from '@koa/router'
 import { AppContext } from './server'
 import bodyParser from 'koa-body'
