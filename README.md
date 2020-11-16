@@ -1,6 +1,8 @@
 # node-data-editor
 A customizable data editor for node, using JSON schema. By using custom Data Adapters, it can be connetced to a REST API or any other data provider.
 
+![interface](docs/interface.png)
+
 ## Install
 ```
 npm install node-data-editor
@@ -58,8 +60,8 @@ The Schma definitions follow [JSON Schema](https://json-schema.org/). It needs t
 
 
 #### Schema Example
-```
-{
+```javascript
+var schema = {
   "$id": "Book",
   "properties": {
     "id": {
@@ -69,30 +71,29 @@ The Schma definitions follow [JSON Schema](https://json-schema.org/). It needs t
       "type": "string",
       "default" : "John Doe"
     },
-    "title: {
-      "type: "string",
+    "title": {
+      "type": "string",
       "default" : "untitled"
     }
   },
-  "primaryKey: "id",
-  "required": [
-    "title"
-  ]
+  "primaryKey": "id",
+  "required": [ "title" ]
 }
 ```
 #### Custom Title for data entry
 By Defining titleTemplate You can display a custom title for each data entry in the data model using [lodash templates](https://lodash.com/docs/4.17.15#template).
-```
-schema : {
-    $id: 'projects',
-    properties: {
-      id : { type: 'string' },
-      name : { type: 'string' }
-    },
-    primaryKey: 'id',
-    required : ['name', 'description', 'password'],
-    titleTemplate: '${name}:${id}'
-  }
+```javascript
+// example using titleTemplate
+var schema = {
+  $id: 'projects',
+  properties: {
+    id : { type: 'string' },
+    name : { type: 'string' }
+  },
+  primaryKey: 'id',
+  required : ['name', 'description', 'password'],
+  titleTemplate: '${name}:${id}'
+}
 ```
 
 ### Data Adapter
@@ -106,19 +107,19 @@ The connection to a dataset/database works through the Adapter Interface. There 
 
 #### MemoryAdapter
 ```javascript
-  // first argument is the initial data array, second argument is the primary Key of the entries.
+  // saves data in an array. does not persist data. first argument is the initial data array, second argument is the primary Key of the entries.
   const adapter = new MemoryAdapter([], 'id')
 ```
 
 #### Custom Adapter
-The custom adapter needs to implement 5 Methods. See [src/adapter.ts](src/adapter.ts) MemoryAdapter or RestAdapter for example implementations.
+The custom adapter needs to implement 5 Methods. See [src/adapter.ts](src/adapter.ts) MemoryAdapter or RestAdapter for example implementations. 'id' is the defined primaryKey of the schema.
 ```javascript
   class CustomAdapter implements DataEditor.Adapter {
     list(): Promise<object[]> {
       // list all data entries of this resource
     }
     read(id: string): Promise<object> {
-      // list one entry with the specified primaryKey
+      // list one entry with the specified id
     }
     update(id: string, data: any): Promise<void> {
       // updates a single entry, specified by id
