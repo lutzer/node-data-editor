@@ -1,3 +1,4 @@
+/* eslint-disable no-template-curly-in-string */
 import * as DataEditor from './src/index'
 // const DataEditor = require('./src/index')
 
@@ -9,6 +10,7 @@ const model1 : { schema: DataEditor.DataSchema, data : object[] } = {
     properties: {
       id: { type: 'string' },
       text: { type: 'string', default: 'text' },
+      longtext: { type: 'string', default: 'text', maxLength: 512 },
       number: { type: 'number', default: 0 },
       boolean: { type: 'boolean', default: false },
       array: { type: 'array', default: [1, 2, 3] },
@@ -18,7 +20,8 @@ const model1 : { schema: DataEditor.DataSchema, data : object[] } = {
     required: ['text'],
     links: [
       { model: 'bar', foreignKey: 'fooId' }
-    ]
+    ],
+    titleTemplate: '${id}:${text}'
   },
   data: [
     { id: '0', text: 'lorem', number: 42, boolean: true, array: [1, 2, 3], object: { x: 5 } },

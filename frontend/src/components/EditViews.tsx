@@ -2,7 +2,7 @@ import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
 import './styles/EditView.scss';
 
-const TextEditView = ({label, value, onChange, rows = 1, maxLength = 512} : {
+const TextEditView = ({label, value, onChange, rows = 5, maxLength = 64} : {
   label : string, 
   value : string, 
   onChange : (text: string) => void,
@@ -28,7 +28,7 @@ const TextEditView = ({label, value, onChange, rows = 1, maxLength = 512} : {
     <div className='input-wrapper'>
       <label>{label}</label>
       <div className={'input-element' + (changed ? ' changed' : '' )}>
-        { rows > 1 ? 
+        { (maxLength > 64) ? 
         <textarea 
           value={current || ''} 
           maxLength={maxLength}

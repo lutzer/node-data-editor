@@ -1,6 +1,6 @@
 {
   "name": "node-data-editor",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "a simple data editor for node, based on json schema with a customziable data adapter structure.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

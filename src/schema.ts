@@ -17,6 +17,7 @@ type DataSchema = {
   primaryKey: string
   required? : string[]
   links? : { model : string, foreignKey : string }[]
+  titleTemplate? : string
 }
 
 class SchemaError extends Error {}

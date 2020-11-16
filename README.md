@@ -18,7 +18,7 @@ const DataEditor = require('./src/index')
 
 ### basic example
 ```javascript
-  import * as DataEditor from './src/index'
+  import * as DataEditor from 'node-data-editor'
 
   DataEditor.start({
     models: [new DataEditor.DataModel({
@@ -42,8 +42,8 @@ const DataEditor = require('./src/index')
 
 ### Schema Description
 The Schma definitions follow [JSON Schema](https://json-schema.org/). It needs to contain a primaryKey property of a type string, itentified by the 'primaryKey' field. The Editor currently does not support nested properties, just the base Datatypes. It will validate nested properties though.
-```
-  // Datatypes can be: 'string','number','boolean','object' or 'array
+```typescript
+  // type DataType = 'string' | 'number' | 'boolean' | 'object' | 'array' | 'null'
   {
     $id: string,
     properties: { [key : string] : {
@@ -52,6 +52,7 @@ The Schma definitions follow [JSON Schema](https://json-schema.org/). It needs t
     }}
     primaryKey: string,
     required? : string[],
+    titleTemplate? : string
   }
 ```
 
@@ -79,6 +80,20 @@ The Schma definitions follow [JSON Schema](https://json-schema.org/). It needs t
   ]
 }
 ```
+#### Custom Title for data entry
+By Defining titleTemplate You can display a custom title for each data entry in the data model using [lodash templates](https://lodash.com/docs/4.17.15#template).
+```
+schema : {
+    $id: 'projects',
+    properties: {
+      id : { type: 'string' },
+      name : { type: 'string' }
+    },
+    primaryKey: 'id',
+    required : ['name', 'description', 'password'],
+    titleTemplate: '${name}:${id}'
+  }
+```
 
 ### Data Adapter
 The connection to a dataset/database works through the Adapter Interface. There are two implementations:
@@ -91,7 +106,7 @@ The connection to a dataset/database works through the Adapter Interface. There 
 
 #### MemoryAdapter
 ```javascript
-  // second argument is the primary Key of the entries
+  // first argument is the initial data array, second argument is the primary Key of the entries.
   const adapter = new MemoryAdapter([], 'id')
 ```
 
