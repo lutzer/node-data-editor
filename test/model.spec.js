@@ -51,93 +51,74 @@ describe('DataModel Tests', () => {
 
   it('should be able to fetch entries', async () => {
     const model = createModel()
-    await model.fetch()
-    expect(model.data).is.lengthOf(3)
+    const data = await model.list()
+    expect(data).is.lengthOf(3)
   })
 
   it('should be able to fetch a single entries', async () => {
     const model = createModel()
-    await model.fetch(0)
-    expect(model.data).is.lengthOf(1)
-    await model.fetch('0')
-    expect(model.data).is.lengthOf(1)
+    expect(await model.get(0)).to.be.not.empty
+    expect(await model.get('0')).to.be.not.empty
   })
 
   it('should be able to get a single entry by number', async () => {
     const model = createModel()
-    await model.fetch()
-    expect(model.get(0)).to.deep.equal({ id: '0', text: 'foo'})
-    expect(model.get(2)).to.deep.equal({ id: '2', text: 'foo'})
+    expect(await model.get(0)).to.deep.equal({ id: '0', text: 'foo'})
+    expect(await model.get(2)).to.deep.equal({ id: '2', text: 'foo'})
   })
 
   it('should be able to get a single entry by string', async () => {
     const model = createModel()
-    await model.fetch()
-    expect(model.get('0')).to.deep.equal({ id: '0', text: 'foo'})
-    expect(model.get('2')).to.deep.equal({ id: '2', text: 'foo'})
+    expect(await model.get('0')).to.deep.equal({ id: '0', text: 'foo'})
+    expect(await model.get('2')).to.deep.equal({ id: '2', text: 'foo'})
   })
 
 
   it('should be able to delete entry by number', async () => {
     const model = createModel()
-    await model.fetch()
-    const numberOfEntries = model.data.length
+    const numberOfEntries = (await model.list()).length
     await model.delete(0)
     await model.delete(2)
-    expect(model.data).is.lengthOf(numberOfEntries-2)
-    await model.sync()
-    await model.fetch()
-    expect(model.data).is.lengthOf(numberOfEntries-2)
+    const data = await model.list()
+    expect(data).is.lengthOf(numberOfEntries-2)
   })
 
   it('should be able to delete entry by string', async () => {
     const model = createModel()
-    await model.fetch()
-    const numberOfEntries = model.data.length
+    const numberOfEntries = (await model.list()).length
     await model.delete('0')
     await model.delete('2')
-    await model.sync()
-    await model.fetch()
-    expect(model.data).is.lengthOf(numberOfEntries-2)
+    const data = await model.list()
+    expect(data).is.lengthOf(numberOfEntries-2)
   })
 
   it('should be able to update entry', async () => {
     const model = createModel()
-    await model.fetch()
     await model.update('0', { id: '5', text: 'changed'})
-    await model.sync()
-    await model.fetch()
-    expect(model.get(5)).to.deep.equal({ id: '5', text :'changed'})
+    expect(await model.get(5)).to.deep.equal({ id: '5', text :'changed'})
   })
 
   it('should be able to update entry multiple times', async () => {
     const model = createModel()
-    await model.fetch()
     await model.update('0', { id: '5', text: 'changed'})
     await model.update('5', { id: '7', text: 'changed2'})
     await model.update('7', { id: '8', text: 'changed3'})
-    await model.sync()
-    await model.fetch()
-    expect(model.get('0')).to.be.undefined
-    expect(model.get('5')).to.be.undefined
-    expect(model.get('7')).to.be.undefined
-    expect(model.get('8')).to.deep.equal({ id: '8', text :'changed3'})
+    expect(await model.get('0')).to.be.undefined
+    expect(await model.get('5')).to.be.undefined
+    expect(await model.get('7')).to.be.undefined
+    expect(await model.get('8')).to.deep.equal({ id: '8', text :'changed3'})
   })
 
   it('should be able to create a new entry', async () => {
     const model = createModel()
-    await model.fetch()
     await model.create({ id: '5', text: 'new'})
-    await model.sync()
-    await model.fetch()
-    expect(model.get(5)).to.deep.equal({ id: '5', text :'new'})
+    expect(await model.get(5)).to.deep.equal({ id: '5', text :'new'})
   })
 
   it('should not be able to update a property that does not exist in the scheme', async () => {
     const model = createModel()
-    await model.fetch()
     await model.create({ id: '5', title: 'hey'})
-    expect(model.get(5)).to.not.have.property('title')
+    expect(await model.get(5)).to.not.have.property('title')
   })
 })
 
@@ -147,19 +128,17 @@ describe('DataModel API Call Tests', () => {
   it('should fetch data from api', async () => {
     nock(apiAddress).get('/').reply(200, apiData);
     const model = new DataModel({ schema: schema, adapter: new RestAdapter(apiAddress)})
-    await model.fetch()
-    expect(model.data).to.deep.equal(apiData)
+    expect(await model.list()).to.deep.equal(apiData)
   });
 
   it('should return model by id', async () => {
-    nock(apiAddress).get('/').reply(200, apiData);
+    nock(apiAddress).get('/0').reply(200, apiData[0]);
     const model = new DataModel({ schema: schema, adapter: new RestAdapter(apiAddress)})
-    await model.fetch()
-    expect(model.get(0)).to.deep.equal(apiData[0])
+    expect(await model.get(0)).to.deep.equal(apiData[0])
   });
 
   it('should work with custom key', async () => {
-    nock(apiAddress).get('/').reply(200, [ {title: 'test1', data: 'x'}, { title: 'test2', data: 'y'} ]);
+    nock(apiAddress).get('/test2').reply(200, { title: 'test2', data: 'y'});
     const model = new DataModel({ schema: {
       $id: 'test', 
       properties : { 
@@ -167,54 +146,39 @@ describe('DataModel API Call Tests', () => {
         data : { type : 'string' }
       }, primaryKey: 'title'
     }, adapter: new RestAdapter(apiAddress)})
-    await model.fetch()
-    expect(model.get('test2')).to.deep.equal({ title: 'test2', data: 'y' })
+    expect(await model.get('test2')).to.deep.equal({ title: 'test2', data: 'y' })
   })
 
   it('should be able to change data in model', async () => {
-    nock(apiAddress).get('/').reply(200, apiData);
+    nock(apiAddress).get('/1').reply(200, apiData[1]);
     const model = new DataModel({ schema: schema, adapter: new RestAdapter(apiAddress)})
-    await model.fetch()
-    model.update('1',{ text: 'changed' })
-    expect(model.get('1').text).to.be.equal('changed')
+    const scope = nock(apiAddress).put('/1', (body) => _.isEqual(body.text, 'changed') ).reply(200)
+    await model.update('1',{ text: 'changed' })
+    scope.done()
   });
 
   it('should be able to delete an entry', async () => {
     nock(apiAddress).get('/').reply(200, apiData);
     const model = new DataModel({ schema: schema, adapter: new RestAdapter(apiAddress)})
-    await model.fetch()
-    model.delete('2')
-    expect(model.data.length).to.be.equal(2)
+    const scope = nock(apiAddress).delete('/2').reply(200)
+    await model.delete('2')
+    scope.done()
   });
 
   it('should sync deletes to the server', async() => {
     nock(apiAddress).get('/').reply(200, apiData);
     const scope = nock(apiAddress).delete('/1').reply(200)
     const model = new DataModel({ schema: schema, adapter: new RestAdapter(apiAddress)})
-    await model.fetch()
-    model.delete(1)
-    await model.sync()
-    scope.done()
-  })
-
-  it('should sync data changes to the server', async() => {
-    nock(apiAddress).get('/').reply(200, apiData);
-    const model = new DataModel({ schema: schema, adapter: new RestAdapter(apiAddress)})
-    await model.fetch()
-    model.update('1',{ text : 'changed'})
-    const scope = nock(apiAddress).put('/1', (body) => _.isEqual(body,model.get(1))).reply(200)
-    await model.sync()
+    await model.delete(1)
     scope.done()
   })
 
   it('should create a new entry on the server', async() => {
     nock(apiAddress).get('/').reply(200, apiData);
     const model = new DataModel({ schema: schema, adapter: new RestAdapter(apiAddress)})
-    await model.fetch()
-    model.create({ id: '4', text: 'test4' })
-    const scope = nock(apiAddress).post('/', (body) => _.isEqual(body,model.get(4)) ).reply(200)
-    await model.sync()
+    const scope = nock(apiAddress).post('/', (body) => _.isEqual(body, { id: '4', text: 'test4' }) ).reply(200)
+    await model.create({ id: '4', text: 'test4' })
     scope.done()
   })
 
-}); 
+});

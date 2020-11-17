@@ -1,11 +1,10 @@
-import axios from 'axios'
+import axios, { AxiosRequestConfig } from 'axios'
 import { keyEquals } from './utils'
-import { Credentials } from './router'
 import _ from 'lodash'
 
 abstract class Adapter {
   abstract async list() : Promise<object[]>
-  abstract async read(id : string) : Promise<object | null>
+  abstract async read(id : string) : Promise<object|undefined>
   abstract async update(id: string, data : any) : Promise<void>
   abstract async delete(id : string) : Promise<void>
   abstract async create(data: any) : Promise<object>
@@ -17,12 +16,10 @@ class RestAdapter extends Adapter {
   address : string
   options : any = {}
 
-  constructor(address : string, auth? : Credentials) {
+  constructor(address : string, options? : AxiosRequestConfig) {
     super()
     this.address = address
-    if (auth) {
-      this.options.auth = { username: auth.login, password: auth.password }
-    }
+    this.options = options
   }
 
   async list(): Promise<object[]> {
@@ -30,7 +27,7 @@ class RestAdapter extends Adapter {
     return result.data
   }
 
-  async read(id: string): Promise<object> {
+  async read(id: string): Promise<object|undefined> {
     const result = await axios.get(`${this.address}/${id}`, this.options)
     return result.data
   }
@@ -63,9 +60,9 @@ class MemoryAdapter extends Adapter {
     return _.cloneDeep(this.data)
   }
 
-  async read(id : string) : Promise<object|null> {
+  async read(id : string) : Promise<object|undefined> {
     const val = this.data.find((ele : any) => keyEquals(ele[this.key], id))
-    return _.cloneDeep(val || null)
+    return _.cloneDeep(val)
   }
 
   async delete(id : string) {

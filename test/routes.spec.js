@@ -30,12 +30,14 @@ describe('Api Route Tests', () => {
     required : ['id']
   }
 
+  const modelData = [
+    { id: '0', data: 'foo'},
+    { id: '1', data: 'foo'},
+    { id: '2', data: 'foo'},
+  ]
+
   function createModel() {
-    return new DataModel({ schema: schema, adapter : new MemoryAdapter([
-      { id: '0', data: 'foo'},
-      { id: '1', data: 'foo'},
-      { id: '2', data: 'foo'},
-    ], 'id')})
+    return new DataModel({ schema: schema, adapter : new MemoryAdapter(modelData, 'id')})
   }
 
   var server = null
@@ -74,7 +76,7 @@ describe('Api Route Tests', () => {
   it(`should serve model data on GET /api/${schema.$id}/`, async () => {
     let result = await connect().get(`/api/${schema.$id}/`).auth(credentials.login, credentials.password)
     expect(result).to.have.status(200)
-    expect(result.body).to.deep.equal({ schema: model.schema, data: model.data })
+    expect(result.body).to.deep.equal({ schema: model.schema, data: modelData })
   })
 
   it(`should not serve model data on model that does not exist`, async () => {
@@ -85,7 +87,7 @@ describe('Api Route Tests', () => {
   it(`should serve model data on GET /api/${schema.$id}/0`, async () => {
     let result = await connect().get(`/api/${schema.$id}/0`).auth(credentials.login, credentials.password)
     expect(result).to.have.status(200)
-    expect(result.body).to.deep.equal({ schema: model.schema, data: model.get(0) })
+    expect(result.body).to.deep.equal({ schema: model.schema, data: modelData[0], links:[] })
   })
 
   it(`should delete entry data on DELETE /api/${schema.$id}/0`, async () => {

@@ -18,10 +18,8 @@ const model1 : { schema: DataEditor.DataSchema, data : object[] } = {
     },
     primaryKey: 'id',
     required: ['text'],
-    links: [
-      { model: 'bar', foreignKey: 'fooId' }
-    ],
-    titleTemplate: '${id}:${text}'
+    titleTemplate: '${id}:${text}',
+    links: [{ model: 'bar', key: 'id', foreignKey: 'fooId' }]
   },
   data: [
     { id: '0', text: 'lorem', number: 42, boolean: true, array: [1, 2, 3], object: { x: 5 } },
@@ -38,6 +36,7 @@ const model2 : { schema: any, data : object[] } = {
       id: { type: 'string' },
       text: { type: 'string' },
       number: { type: 'number', maximum: 10, minimum: 0 },
+      fooId: { type: 'string' },
       boolean: { type: 'boolean' },
       array: { type: 'array' },
       object: { type: 'object' }
@@ -46,10 +45,10 @@ const model2 : { schema: any, data : object[] } = {
     required: ['text', 'number']
   },
   data: [
-    { id: '0', text: 'lorem', number: 42, boolean: true, array: [1, 2, 3], object: { x: 5 } },
-    { id: '1', text: 'lorem ipsum', number: 43, boolean: false, array: [4, 5, 6], object: { x: 10 } },
-    { id: '2', text: 'lorem ipsum', number: 43, boolean: false, array: [4, 5, 6], object: { x: 10 } },
-    { id: '3', text: 'lorem ipsum', number: 43, boolean: false, array: [4, 5, 6], object: { x: 10 } }
+    { id: '0', text: 'lorem', fooId: '0', number: 42, boolean: true, array: [1, 2, 3], object: { x: 5 } },
+    { id: '1', text: 'lorem ipsum', fooId: '0', number: 43, boolean: false, array: [4, 5, 6], object: { x: 10 } },
+    { id: '2', text: 'lorem ipsum', fooId: '1', number: 43, boolean: false, array: [4, 5, 6], object: { x: 10 } },
+    { id: '3', text: 'lorem ipsum', fooId: '2', number: 43, boolean: false, array: [4, 5, 6], object: { x: 10 } }
   ]
 }
 

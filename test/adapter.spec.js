@@ -2,6 +2,7 @@ const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised')
 const nock = require('nock');
 const _ = require('lodash')
+const basic = require('basic-authorization-header');
 
 const expect = chai.expect
 chai.use(chaiAsPromised)
@@ -51,6 +52,18 @@ describe('RestAdapter Tests', () => {
     nock(apiAddress).delete('/1').reply(400)
     const adapter = new RestAdapter(apiAddress)
     await expect(adapter.delete('1')).to.be.rejectedWith(`Request failed with status code 400`)
+  });
+
+  it('should pass the options object to axios calls', async () => {
+    const scope = nock(apiAddress, {
+      reqheaders: {
+        authorization: basic('test1','test2'),
+      }
+    }).get('/1').reply(200)
+    nock(apiAddress)
+    const adapter = new RestAdapter(apiAddress, { auth : { username: 'test1', password: 'test2' }})
+    await adapter.read(1)
+    scope.done()
   });
 
 }); 

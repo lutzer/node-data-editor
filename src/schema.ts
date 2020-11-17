@@ -16,7 +16,7 @@ type DataSchema = {
   properties: { [key : string] : DataSchemaProperty }
   primaryKey: string
   required? : string[]
-  links? : { model : string, foreignKey : string }[]
+  links? : { model : string, key : string, foreignKey : string }[]
   titleTemplate? : string
 }
 

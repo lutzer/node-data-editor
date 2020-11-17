@@ -1,6 +1,6 @@
 {
   "name": "node-data-editor",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "a simple data editor for node, based on json schema with a customziable data adapter structure.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -47,12 +47,14 @@
     "@koa/router": "^9.4.0",
     "ajv": "^6.12.6",
     "axios": "^0.20.0",
+    "basic-authorization-header": "^0.2.7",
     "koa": "^2.13.0",
     "koa-body": "^4.2.0",
     "koa-static": "^5.0.0",
     "lodash": "^4.17.20"
   },
   "files": [
-    "dist", "frontend"
+    "dist",
+    "frontend"
   ]
 }

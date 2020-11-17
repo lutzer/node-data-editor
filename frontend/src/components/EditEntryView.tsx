@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import React, { useContext, useEffect, useState} from 'react'
-import { useLocation, useParams } from 'react-router-dom'
-import { Api, ApiException, DataSchema, DataSchemaProperty, Entry } from '../api'
+import { Link, useLocation, useParams } from 'react-router-dom'
+import { Api, ApiException, DataModelLink, DataSchema, DataSchemaProperty, Entry } from '../api'
 import { AppContext } from './App'
 import { DeleteButton } from './DeleteButton'
 import { BooleanEditView, JsonEditorView, NumberEditView, TextEditView } from './EditViews'
@@ -69,7 +69,7 @@ function renderSchemaField( { key, property, value, onChange } :
 }
 
 const EditEntryView = ({onUpdatedEntry} : { onUpdatedEntry : (res : Entry) => void}) => {
-  const [ entry, setEntry ] = useState<{schema: DataSchema, data: any}|null>(null)
+  const [ entry, setEntry ] = useState<{schema: DataSchema, data: any, links : DataModelLink[]}|null>(null)
   const [ changes, setChanges ] = useState<object>({})
   const { modelName, entryId } = useParams<{modelName : string, entryId: string}>()
   const { credentials, showModal, onAuthorizationError } = useContext(AppContext);
@@ -81,7 +81,7 @@ const EditEntryView = ({onUpdatedEntry} : { onUpdatedEntry : (res : Entry) => vo
       return
     Api.getEntry(modelName, entryId, credentials).then( (res) => {
       if (_.has(res,'data'))
-        setEntry({ schema: res.schema, data: res.data })
+        setEntry({ schema: res.schema, data: res.data, links: res.links })
       else
         setEntry(null)
     }).catch( (err : ApiException) => {
@@ -123,7 +123,7 @@ const EditEntryView = ({onUpdatedEntry} : { onUpdatedEntry : (res : Entry) => vo
 
   function renderFooter() {
     if (!entry)
-      return null;
+      return null
     else
       return(
         <div className='footer'>
@@ -134,18 +134,42 @@ const EditEntryView = ({onUpdatedEntry} : { onUpdatedEntry : (res : Entry) => vo
         </div>
       )
   }
+
+  function renderLinkList() {
+    if (!entry || !entry.schema.links || _.isEmpty(entry.links)) {
+      return null
+    } else {
+      return(
+        <div className='link-list'>
+          <h3>Links</h3>
+          { entry.schema.links.map((link, i) => {
+            return(
+              <ul key={i}>
+                { entry.links[i].entries.map((entry, j : number) => 
+                  <li><Link key={j} to={`/models/${link.model}/${entry}`}>{`${link.model}/${entry}`}</Link></li>)
+                }
+              </ul>
+            )
+          }) }
+        </div>
+      )
+    }
+  }
   
   return(
     <div className='entry-view'>
       <HeaderView/>
       { entry ?
-        Object.entries(entry.schema.properties).map( ([key, val],i) => {
-          return(
-            <div key={i}>
-              { renderSchemaField({ key: key, property: val, value: entry.data[key], onChange: onDataChange}) }
-            </div>
-          )
-        })
+        <div>
+          { Object.entries(entry.schema.properties).map( ([key, val],i) => {
+            return(
+              <div key={i}>
+                { renderSchemaField({ key: key, property: val, value: entry.data[key], onChange: onDataChange}) }
+              </div>
+            )
+          }) }
+          { renderLinkList() }
+        </div>
         :
         <p className='empty-entry'>Entry does not exist.</p>
         }

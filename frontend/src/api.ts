@@ -1,6 +1,7 @@
 import base64 from 'base-64'
 import { config } from './config'
 import { DataSchema, DataSchemaProperty } from './../../src/schema'
+import { DataModelLink } from './../../src/model'
 
 class ApiException extends Error {
 
@@ -60,7 +61,7 @@ class Api {
     return json
   }
 
-  static async getEntry(modelId: string, entryId : string, credentials? : Credentials) : Promise<{schema: DataSchema, data: any}> {
+  static async getEntry(modelId: string, entryId : string, credentials? : Credentials) : Promise<{schema: DataSchema, data: any, links : DataModelLink[]}> {
     let response = await fetch(config.apiAdress + `/${modelId}/${entryId}` , {
       method: 'GET',
       headers: Object.assign({},{
@@ -120,4 +121,4 @@ function getCredentials() : Credentials {
 }
 
 export { Api, ApiException, setCredentials, getCredentials }
-export type { DataSchema, DataSchemaProperty, Entry, Credentials }
+export type { DataSchema, DataSchemaProperty, Entry, Credentials, DataModelLink }

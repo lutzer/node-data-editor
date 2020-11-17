@@ -12,13 +12,14 @@ npm install node-data-editor
 
 ### Import
 
-```
-import * as DataEditor from './src/index'
-or
-const DataEditor = require('./src/index')
+```javascript
+import * as DataEditor from 'node-data-editor'
+// or
+const DataEditor = require('node-data-editor')
 ```
 
-### basic example
+### Basic example
+
 ```javascript
   import * as DataEditor from 'node-data-editor'
 
@@ -43,7 +44,8 @@ const DataEditor = require('./src/index')
 ```
 
 ### Schema Description
-The Schma definitions follow [JSON Schema](https://json-schema.org/). It needs to contain a primaryKey property of a type string, itentified by the 'primaryKey' field. The Editor currently does not support nested properties, just the base Datatypes. It will validate nested properties though.
+The Schma definitions follow [JSON Schema](https://json-schema.org/). It needs to contain a primaryKey property of type string, itentified by the 'primaryKey' field. The Editor currently does not support nested properties, just the base Datatypes. It will validate nested properties though.
+
 ```typescript
   // type DataType = 'string' | 'number' | 'boolean' | 'object' | 'array' | 'null'
   {
@@ -54,12 +56,14 @@ The Schma definitions follow [JSON Schema](https://json-schema.org/). It needs t
     }}
     primaryKey: string,
     required? : string[],
-    titleTemplate? : string
+    titleTemplate? : string,
+    links? : { model : string, key : string, foreignKey : string }[]
   }
 ```
 
 
 #### Schema Example
+
 ```javascript
 var schema = {
   "$id": "Book",
@@ -81,7 +85,8 @@ var schema = {
 }
 ```
 #### Custom Title for data entry
-By Defining titleTemplate You can display a custom title for each data entry in the data model using [lodash templates](https://lodash.com/docs/4.17.15#template).
+By defining titleTemplate a custom title is displayed for each data entry in the data model using [lodash templates](https://lodash.com/docs/4.17.15#template).
+
 ```javascript
 // example using titleTemplate
 var schema = {
@@ -96,16 +101,42 @@ var schema = {
 }
 ```
 
+#### Linking Models
+By defining a link property in the schema, an entry can be linked to other models by specifing a key and foreign Key to match entries:
+
+```javascript
+var schema1 = {
+  $id : 'foo',
+  properties: {
+    id: { type: 'string' },
+    text: { type : 'string' }
+  },
+  primaryKey : 'id',
+  links : [ { model: 'bar', key: 'id', foreignKey: 'fooId' } ]
+}
+var schema2 = {
+  $id : 'bar',
+  properties: {
+    id: { type: 'string' },
+    fooId : { type : 'string' },
+    text: { type : 'string' }
+  },
+  primaryKey : 'id',
+}
+```
+
 ### Data Adapter
 The connection to a dataset/database works through the Adapter Interface. There are two implementations:
 
 #### RestAdapter
+
 ```javascript
-  // connects to a standard REST api, using these endpoints: GET '/', GET '/:id', PUT '/:id', POST '/', DELETE '/:id'
-  const adapter = new RestAdapter(apiAddress)
+  // connects to a standard REST api, using these endpoints: GET '/', GET '/:id', PUT '/:id', POST '/', DELETE '/:id'. The Options object is passed to the axios http calls.
+  const adapter = new RestAdapter(apiAddress, options)
 ```
 
 #### MemoryAdapter
+
 ```javascript
   // saves data in an array. does not persist data. first argument is the initial data array, second argument is the primary Key of the entries.
   const adapter = new MemoryAdapter([], 'id')
@@ -113,12 +144,13 @@ The connection to a dataset/database works through the Adapter Interface. There 
 
 #### Custom Adapter
 The custom adapter needs to implement 5 Methods. See [src/adapter.ts](src/adapter.ts) MemoryAdapter or RestAdapter for example implementations. 'id' is the defined primaryKey of the schema.
+
 ```javascript
   class CustomAdapter implements DataEditor.Adapter {
     list(): Promise<object[]> {
       // list all data entries of this resource
     }
-    read(id: string): Promise<object> {
+    read(id: string): Promise<object|undefined> {
       // list one entry with the specified id
     }
     update(id: string, data: any): Promise<void> {
