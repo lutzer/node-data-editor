@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Switch, Route, useHistory, Redirect } from "react-router-dom";
-import { Api, ApiException, Credentials, Entry, DataSchema } from '../api';
+import { Api, ApiException, Credentials, DataSchema } from '../api';
 import { EditEntryView } from './EditEntryView';
 import { ModelList } from './ModelList';
 import { ModelView } from './ModelView';
@@ -8,6 +8,7 @@ import { ModalOverlay, ModalProperties } from './ModalOverlay';
 import { LoginView } from './LoginView';
 import './styles/App.scss';
 import { CreateEntryView } from './CreateEntryView';
+import { ModelEntryResponse } from '../../../src/router';
 
 type AppContextType = {
   credentials : Credentials,
@@ -65,7 +66,6 @@ function App() {
   useEffect( () => {
     loadData().then()
   },[loadData])
-  
 
   function onLogin(c : Credentials) {
     setCredentials(c)
@@ -77,8 +77,8 @@ function App() {
   //   setCredentials({ login: '', password: '' })
   // }
 
-  function onUpdate(entry : Entry, newEntry : boolean = false) {
-    history.push(`/models/${entry.schema.$id}/${entry.data[entry.schema.primaryKey]}`)
+  function onUpdate(response : ModelEntryResponse, newEntry : boolean = false) {
+    history.push(`/models/${response.schema.$id}/${response.entry?.$key}`)
     if (newEntry)
       showModal('Created', 'Entry was created.' )
     else

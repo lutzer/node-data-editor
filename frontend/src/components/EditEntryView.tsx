@@ -1,7 +1,8 @@
 import _ from 'lodash'
 import React, { useContext, useEffect, useState} from 'react'
 import { Link, useLocation, useParams } from 'react-router-dom'
-import { Api, ApiException, DataModelLink, DataSchema, DataSchemaProperty, Entry } from '../api'
+import { ModelEntryResponse } from '../../../src/router'
+import { Api, ApiException, DataSchemaProperty, DataEntry, DataModelLink, DataSchema } from '../api'
 import { AppContext } from './App'
 import { DeleteButton } from './DeleteButton'
 import { BooleanEditView, JsonEditorView, NumberEditView, TextEditView } from './EditViews'
@@ -68,8 +69,32 @@ function renderSchemaField( { key, property, value, onChange } :
     )
 }
 
-const EditEntryView = ({onUpdatedEntry} : { onUpdatedEntry : (res : Entry) => void}) => {
-  const [ entry, setEntry ] = useState<{schema: DataSchema, data: any, links : DataModelLink[]}|null>(null)
+const LinkList = ({linkList} : {linkList: DataModelLink[]}) => {
+  if ( _.isEmpty(linkList)) {
+    return null
+  } else {
+    return(
+      <div className='link-list'>
+        <h3>Links</h3>
+        { linkList.map((links, i) => {
+          return(
+            <ul key={i}>
+              { links.entries.map((entry, j : number) => 
+                <li  key={j}><Link to={`/models/${links.model}/${entry.key}`}>{`${links.model}/${entry.title}`}</Link></li>)
+              }
+            </ul>
+          )
+        }) }
+      </div>
+    )
+  }
+}
+
+const EditEntryView = ({onUpdatedEntry} : { onUpdatedEntry : (res : ModelEntryResponse) => void}) => {
+  const [ entry, setEntry ] = useState<DataEntry>()
+  const [ schema, setSchema ] = useState<DataSchema>()
+  const [ links, setLinks ] = useState<DataModelLink[]>([])
+
   const [ changes, setChanges ] = useState<object>({})
   const { modelName, entryId } = useParams<{modelName : string, entryId: string}>()
   const { credentials, showModal, onAuthorizationError } = useContext(AppContext);
@@ -80,10 +105,9 @@ const EditEntryView = ({onUpdatedEntry} : { onUpdatedEntry : (res : Entry) => vo
     if (!modelName || !entryId)
       return
     Api.getEntry(modelName, entryId, credentials).then( (res) => {
-      if (_.has(res,'data'))
-        setEntry({ schema: res.schema, data: res.data, links: res.links })
-      else
-        setEntry(null)
+      setEntry(res.entry)
+      setSchema(res.schema)
+      setLinks(res.links)
     }).catch( (err : ApiException) => {
       if (err.statusCode === 401)
         onAuthorizationError(location.pathname)
@@ -93,7 +117,7 @@ const EditEntryView = ({onUpdatedEntry} : { onUpdatedEntry : (res : Entry) => vo
   },[modelName, entryId, credentials, onAuthorizationError, showModal, location])
 
   async function onDataChange(key : string, value : any) {
-    if (entry && !_.isEqual(entry.data[key],value)) {
+    if (entry && !_.isEqual(entry.data[key], value)) {
       setChanges(Object.assign({}, changes, _.set({}, key, value)))
     } else {
       setChanges(_.omit(changes, key))
@@ -135,40 +159,19 @@ const EditEntryView = ({onUpdatedEntry} : { onUpdatedEntry : (res : Entry) => vo
       )
   }
 
-  function renderLinkList() {
-    if (!entry || !entry.schema.links || _.isEmpty(entry.links)) {
-      return null
-    } else {
-      return(
-        <div className='link-list'>
-          <h3>Links</h3>
-          { entry.schema.links.map((link, i) => {
-            return(
-              <ul key={i}>
-                { entry.links[i].entries.map((entry, j : number) => 
-                  <li><Link key={j} to={`/models/${link.model}/${entry}`}>{`${link.model}/${entry}`}</Link></li>)
-                }
-              </ul>
-            )
-          }) }
-        </div>
-      )
-    }
-  }
-  
   return(
     <div className='entry-view'>
       <HeaderView/>
-      { entry ?
+      { (schema && entry) ?
         <div>
-          { Object.entries(entry.schema.properties).map( ([key, val],i) => {
+          { Object.entries(schema.properties).map( ([key, val],i) => {
             return(
               <div key={i}>
-                { renderSchemaField({ key: key, property: val, value: entry.data[key], onChange: onDataChange}) }
+                { renderSchemaField({ key: key, property: val, value: entry?.data[key], onChange: onDataChange}) }
               </div>
             )
           }) }
-          { renderLinkList() }
+          <LinkList linkList={links}/>
         </div>
         :
         <p className='empty-entry'>Entry does not exist.</p>

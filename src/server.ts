@@ -30,4 +30,5 @@ const start = function({ models, port = 3002, credentials } : {
   })
 }
 
-export { start, AppContext }
+export { start }
+export type { AppContext }

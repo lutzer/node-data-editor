@@ -76,7 +76,10 @@ describe('Api Route Tests', () => {
   it(`should serve model data on GET /api/${schema.$id}/`, async () => {
     let result = await connect().get(`/api/${schema.$id}/`).auth(credentials.login, credentials.password)
     expect(result).to.have.status(200)
-    expect(result.body).to.deep.equal({ schema: model.schema, data: modelData })
+    expect(result.body.schema).to.deep.equal(model.schema)
+    expect(result.body.entries.map( (e) => e.data)).to.deep.equal(modelData)
+    expect(result.body.entries[0].$key).to.be.string
+    expect(result.body.entries[0].$title).to.be.string
   })
 
   it(`should not serve model data on model that does not exist`, async () => {
@@ -87,14 +90,19 @@ describe('Api Route Tests', () => {
   it(`should serve model data on GET /api/${schema.$id}/0`, async () => {
     let result = await connect().get(`/api/${schema.$id}/0`).auth(credentials.login, credentials.password)
     expect(result).to.have.status(200)
-    expect(result.body).to.deep.equal({ schema: model.schema, data: modelData[0], links:[] })
+    expect(result.body.schema).to.deep.equal(model.schema)
+    expect(result.body.entry.data).to.deep.equal(modelData[0])
+    expect(result.body.links).to.deep.equal([])
+    expect(result.body.entry.$key).to.be.string
+    expect(result.body.entry.$title).to.be.string
+    
   })
 
   it(`should delete entry data on DELETE /api/${schema.$id}/0`, async () => {
     let result = await connect().delete(`/api/${schema.$id}/0`).auth(credentials.login, credentials.password)
     expect(result).to.have.status(200)
     result = await connect().get(`/api/${schema.$id}/`).auth(credentials.login, credentials.password)
-    expect(result.body.data).to.be.lengthOf(2)
+    expect(result.body.entries).to.be.lengthOf(2)
   })
 
   it(`should not be able to delete non existing entry`, async () => {
@@ -106,7 +114,9 @@ describe('Api Route Tests', () => {
     const data = { id: '4', data: 'bar'}
     let result = await connect().post(`/api/${schema.$id}/` ).send(data).auth(credentials.login, credentials.password)
     expect(result).to.have.status(200)
-    expect(result.body.data).to.deep.equal(data)
+    expect(result.body.entry.data).to.deep.equal(data)
+    expect(result.body.entry.$key).to.be.string
+    expect(result.body.entry.$title).to.be.string
   })
 
   it(`should be able to create a new entry, that extends data by one entry`, async () => {
@@ -114,7 +124,7 @@ describe('Api Route Tests', () => {
     await connect().post(`/api/${schema.$id}/` ).send(data).auth(credentials.login, credentials.password)
     let result = await connect().get(`/api/${schema.$id}/`).auth(credentials.login, credentials.password)
     expect(result).to.have.status(200)
-    expect(result.body.data).to.be.lengthOf(4)
+    expect(result.body.entries).to.be.lengthOf(4)
   })
 
   it(`should not be able to create a new entry without required field`, async () => {
@@ -125,10 +135,14 @@ describe('Api Route Tests', () => {
 
   it(`should be able to change an entry`, async () => {
     const data = { data: 'bar'}
-    var result = await connect().put(`/api/${schema.$id}/0`).send(data).auth(credentials.login, credentials.password)
-    result = await connect().get(`/api/${schema.$id}/0`).auth(credentials.login, credentials.password)
-    expect(result).to.have.status(200)
-    expect(result.body.data).to.deep.equal({ id: '0', data: 'bar'})
+    const updateResult = await connect().put(`/api/${schema.$id}/0`).send(data).auth(credentials.login, credentials.password)
+    expect(updateResult).to.have.status(200)
+    expect(updateResult.body.entry.data).to.deep.equal({ id: '0', data: 'bar'})
+    expect(updateResult.body.entry.$key).to.be.string
+    expect(updateResult.body.entry.$title).to.be.string
+    const getResult = await connect().get(`/api/${schema.$id}/0`).auth(credentials.login, credentials.password)
+    expect(getResult).to.have.status(200)
+    expect(getResult.body.entry.data).to.deep.equal({ id: '0', data: 'bar'})
   })
 
   it(`should receive error, when updated entry does not exist`, async () => {

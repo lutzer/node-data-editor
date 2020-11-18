@@ -5,10 +5,27 @@ import { AppContext } from './server'
 import bodyParser from 'koa-body'
 import { config } from './config'
 import { checkBasicAuth } from './utils'
+import { DataEntry, DataModel, DataModelLink } from './model'
+import { DataSchema } from './schema'
 
 type Credentials = {
   login: string
   password: string
+}
+
+type ModelListResponse = {
+  schema: DataSchema,
+  entries: DataEntry[]
+}
+
+type ModelEntryResponse = {
+  schema: DataSchema,
+  links: DataModelLink[]
+  entry?: DataEntry,
+}
+
+type SchemaResponse = {
+  schemas: DataSchema[]
 }
 
 const authMiddleware = async function(basectx: Koa.DefaultContext, next : Koa.Next) {
@@ -17,6 +34,14 @@ const authMiddleware = async function(basectx: Koa.DefaultContext, next : Koa.Ne
     context.throw(401, 'No authorization')
   }
   await next()
+}
+
+function getModel(name: string, context: AppContext) : DataModel {
+  const model = context.models.find((model) => model.schema.$id === context.params.model)
+  if (!model) {
+    throw new ApiError(400, `model ${context.params.model} does not exist.`)
+  }
+  return model
 }
 
 class ApiError extends Error {
@@ -37,18 +62,17 @@ apiRouter.use(authMiddleware)
 apiRouter.get('/', async (basectx : Koa.DefaultContext) => {
   const context : AppContext = <AppContext>basectx
   const schemas = context.models.map((model) => model.schema)
-  context.body = { schemas: schemas }
+  const response : SchemaResponse = { schemas: schemas }
+  context.body = response
 })
 
 apiRouter.get('/:model', async (basectx : Koa.DefaultContext) => {
   const context : AppContext = <AppContext>basectx
   try {
-    const model = context.models.find((model) => model.schema.$id === context.params.model)
-    if (!model) {
-      throw new ApiError(400, `model ${context.params.model} does not exist.`)
-    }
+    const model = getModel(context.params.model, context)
     const data = await model.list()
-    context.body = { schema: model.schema, data: data }
+    const response : ModelListResponse = { schema: model.schema, entries: data }
+    context.body = response
   } catch (err) {
     context.throw(err instanceof ApiError ? err.statusCode : 400, err.message)
   }
@@ -57,13 +81,11 @@ apiRouter.get('/:model', async (basectx : Koa.DefaultContext) => {
 apiRouter.get('/:model/:id', async (basectx : Koa.DefaultContext) => {
   const context : AppContext = <AppContext>basectx
   try {
-    const model = context.models.find((model) => model.schema.$id === context.params.model)
-    if (!model) {
-      throw new ApiError(400, `model ${context.params.model} does not exist.`)
-    }
-    const data = await model.get(context.params.id)
-    const links = await model.getLinks(data, context.models)
-    context.body = { schema: model.schema, data: data, links: links }
+    const model = getModel(context.params.model, context)
+    const entry = await model.get(context.params.id)
+    const links = entry ? await model.getLinks(entry, context.models) : []
+    const response : ModelEntryResponse = { schema: model.schema, entry: entry, links: links }
+    context.body = response
   } catch (err) {
     context.throw(err instanceof ApiError ? err.statusCode : 400, err.message)
   }
@@ -72,12 +94,9 @@ apiRouter.get('/:model/:id', async (basectx : Koa.DefaultContext) => {
 apiRouter.delete('/:model/:id', async (basectx : Koa.DefaultContext) => {
   const context : AppContext = <AppContext>basectx
   try {
-    const model = context.models.find((model) => model.schema.$id === context.params.model)
-    if (!model) {
-      throw new ApiError(400, `model ${context.params.model} does not exist.`)
-    }
+    const model = getModel(context.params.model, context)
     await model.delete(context.params.id)
-    context.body = { }
+    context.body = {}
   } catch (err) {
     context.throw(err instanceof ApiError ? err.statusCode : 400, err.message)
   }
@@ -86,12 +105,10 @@ apiRouter.delete('/:model/:id', async (basectx : Koa.DefaultContext) => {
 apiRouter.post('/:model/', bodyParser(), async (basectx : Koa.DefaultContext) => {
   const context : AppContext = <AppContext>basectx
   try {
-    const model = context.models.find((model) => model.schema.$id === context.params.model)
-    if (!model) {
-      throw new ApiError(400, `model ${context.params.model} does not exist.`)
-    }
+    const model = getModel(context.params.model, context)
     const data = await model.create(context.request.body)
-    context.body = { schema: model.schema, data: data }
+    const response : ModelEntryResponse = { schema: model.schema, entry: data, links: [] }
+    context.body = response
   } catch (err) {
     context.throw(err instanceof ApiError ? err.statusCode : 400, err.message)
   }
@@ -100,15 +117,14 @@ apiRouter.post('/:model/', bodyParser(), async (basectx : Koa.DefaultContext) =>
 apiRouter.put('/:model/:id', bodyParser(), async (basectx : Koa.DefaultContext) => {
   const context : AppContext = <AppContext>basectx
   try {
-    const model = context.models.find((model) => model.schema.$id === context.params.model)
-    if (!model) {
-      throw new ApiError(400, `model ${context.params.model} does not exist.`)
-    }
+    const model = getModel(context.params.model, context)
     const data = await model.update(context.params.id, context.request.body)
-    context.body = { schema: model.schema, data: data }
+    const response : ModelEntryResponse = { schema: model.schema, entry: data, links: [] }
+    context.body = response
   } catch (err) {
     context.throw(err instanceof ApiError ? err.statusCode : 400, err.message)
   }
 })
 
-export { apiRouter, Credentials }
+export { apiRouter }
+export type { ModelListResponse, ModelEntryResponse, SchemaResponse, Credentials }

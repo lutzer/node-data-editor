@@ -1,22 +1,14 @@
 import _ from 'lodash';
 import React, { useEffect, useState, useContext} from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
+import { ModelListResponse } from '../../../src/router';
 import { Api, DataSchema } from '../api';
 import { AppContext } from './App';
 import { HeaderView } from './HeaderView';
 import './styles/ModelView.scss'
 
-
-function getModelTitle(schema: DataSchema, data: any) {
-  if (_.has(schema,'titleTemplate')) {
-    return _.template(schema.titleTemplate)(data)
-  } else {
-    return `${schema.$id}/${data[schema.primaryKey]}`
-  }
-}
-
 const ModelView = () => {
-  const [ model, setModel ] = useState<{ schema: DataSchema, data : any[] }>()
+  const [ model, setModel ] = useState<ModelListResponse>()
   const { modelName } = useParams<{modelName : string}>()
 
   const location = useLocation()
@@ -37,13 +29,11 @@ const ModelView = () => {
   return(
     <div className='model-view'>
       <HeaderView/>
-      { model && !_.isEmpty(model.data) ?
+      { model && !_.isEmpty(model.entries) ?
         <ul>
-        { model.data.map( (entry, i) => {
-          let key = entry[model.schema.primaryKey]
-          let title = getModelTitle(model.schema, entry)
+        { model.entries.map( (entry, i) => {
           return(
-            <li key={i}><Link to={`/models/${modelName}/${key}`}>{title}</Link></li>
+            <li key={i}><Link to={`/models/${modelName}/${entry.$key}`}>{entry.$title}</Link></li>
           )
         })}
         </ul>

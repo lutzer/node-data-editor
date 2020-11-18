@@ -1,7 +1,8 @@
 import base64 from 'base-64'
 import { config } from './config'
 import { DataSchema, DataSchemaProperty } from './../../src/schema'
-import { DataModelLink } from './../../src/model'
+import { ModelListResponse, ModelEntryResponse, SchemaResponse, Credentials } from './../../src/router'
+import { DataEntry, DataModelLink } from '../../src/model'
 
 class ApiException extends Error {
 
@@ -19,23 +20,13 @@ function generateAuthHeader(name: string, password: string) : { Authorization : 
   }
 }
 
-type Credentials = {
-  login : string
-  password : string
-}
-
-type Entry = {
-  schema: DataSchema,
-  data : any
-}
-
 class Api {
 
   static async checkCredentials(credentials? : Credentials) : Promise<void> {
     await this.getSchemas(credentials)
   }
 
-  static async getSchemas(credentials? : Credentials) : Promise<{ schemas: DataSchema[]}> {
+  static async getSchemas(credentials? : Credentials) : Promise<SchemaResponse> {
     let response = await fetch(config.apiAdress + '/', {
       method: 'GET',
       headers: Object.assign({},{
@@ -48,7 +39,7 @@ class Api {
     return json
   }
 
-  static async getModel(modelId: string, credentials? : Credentials) : Promise<{ schema: DataSchema, data: any[]}> {
+  static async getModel(modelId: string, credentials? : Credentials) : Promise<ModelListResponse> {
     let response = await fetch(config.apiAdress + '/' + modelId, {
       method: 'GET',
       headers: Object.assign({},{
@@ -61,7 +52,7 @@ class Api {
     return json
   }
 
-  static async getEntry(modelId: string, entryId : string, credentials? : Credentials) : Promise<{schema: DataSchema, data: any, links : DataModelLink[]}> {
+  static async getEntry(modelId: string, entryId : string, credentials? : Credentials) : Promise<ModelEntryResponse> {
     let response = await fetch(config.apiAdress + `/${modelId}/${entryId}` , {
       method: 'GET',
       headers: Object.assign({},{
@@ -83,7 +74,7 @@ class Api {
       throw new ApiException(response.status, response.statusText)
   }
 
-  static async updateEntry(modelId: string, entryId : string, data: any, credentials? : Credentials) : Promise<Entry> {
+  static async updateEntry(modelId: string, entryId : string, data: any, credentials? : Credentials) : Promise<ModelEntryResponse> {
     let response = await fetch(config.apiAdress + `/${modelId}/${entryId}` , {
       method: 'PUT',
       body: JSON.stringify(data),
@@ -97,7 +88,7 @@ class Api {
     return json
   }
 
-  static async createEntry(modelId: string, data: object, credentials: Credentials) : Promise<Entry> {
+  static async createEntry(modelId: string, data: object, credentials: Credentials) : Promise<ModelEntryResponse> {
     let response = await fetch(config.apiAdress + `/${modelId}/` , {
       method: 'POST',
       body: JSON.stringify(data),
@@ -121,4 +112,4 @@ function getCredentials() : Credentials {
 }
 
 export { Api, ApiException, setCredentials, getCredentials }
-export type { DataSchema, DataSchemaProperty, Entry, Credentials, DataModelLink }
+export type { DataSchema, DataSchemaProperty, Credentials, DataEntry, DataModelLink }

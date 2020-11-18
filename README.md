@@ -88,7 +88,7 @@ var schema = {
 By defining titleTemplate a custom title is displayed for each data entry in the data model using [lodash templates](https://lodash.com/docs/4.17.15#template).
 
 ```javascript
-// example using titleTemplate
+// example using titleTemplate. can be of style <%- name %> or ${name}
 var schema = {
   $id: 'projects',
   properties: {

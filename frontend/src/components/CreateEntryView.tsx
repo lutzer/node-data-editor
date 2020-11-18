@@ -1,13 +1,14 @@
 import _ from 'lodash'
 import React, { useContext, useEffect, useState} from 'react'
 import { useLocation, useParams } from 'react-router-dom'
-import { Api, ApiException, Entry, DataSchema } from '../api'
+import { ModelEntryResponse } from '../../../src/router'
+import { Api, ApiException, DataSchema } from '../api'
 import { AppContext } from './App'
 import { renderSchemaField } from './EditEntryView'
 import { HeaderView } from './HeaderView'
 import './styles/EntryView.scss'
 
-const CreateEntryView = ({ onNewEntry } : { onNewEntry : (res: Entry) => void}) => {
+const CreateEntryView = ({ onNewEntry } : { onNewEntry : (res: ModelEntryResponse) => void}) => {
   const [ schema, setSchema ] = useState<DataSchema|null>(null)
   const [ data, setData ] = useState<object>({})
   const { modelName } = useParams<{modelName : string}>()

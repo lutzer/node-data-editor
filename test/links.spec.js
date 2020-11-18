@@ -106,4 +106,12 @@ describe('DataModel Links', () => {
     const links = await models[2].getLinks(entry, models)
     expect(links[0].entries).to.be.lengthOf(0)
   });
+
+  it.only('should set key and title of a link', async () => {
+    const models = createModels()
+    const entry = await models[0].get('1')
+    const links = await models[0].getLinks(entry, models)
+    expect(links[0].entries[0].key).to.not.be.undefined
+    expect(links[0].entries[0].title).to.not.be.undefined
+  })
 }); 
