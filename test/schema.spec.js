@@ -163,4 +163,22 @@ describe('Schema Tests', () => {
     expect( () => validator.test({ id : ''}) ).to.throw()
   });
 
+  it('validation should set minLength of required strings to 1', async () => {
+    const schema = {
+      $id: 'test',
+      properties: {
+        id: { type: 'string' },
+        text: { type: 'string', default : 'test' },
+        foo: { type: 'string' },
+      },
+      primaryKey : 'id',
+      required : ['id','text']
+    }
+    const validator = new Validator(schema)
+    expect( () => validator.test({ id : ''}) ).to.throw()
+    expect( () => validator.test({ id : '1', text: ''}) ).to.throw()
+    expect(validator.test({ id : '1', foo: 'test3'})).to.deep.equal({ id : '1', text: 'test', foo: 'test3'})
+    expect(validator.test({ id : '1', text: 'test2'})).to.deep.equal({ id : '1', text: 'test2'})
+  });
+
 }); 

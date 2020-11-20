@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import Ajv from 'ajv'
-import { DataSchema } from './types'
+import { DataSchema, DataType } from './types'
 
 class SchemaError extends Error {}
 
@@ -26,6 +26,10 @@ class Validator {
     schema.required.forEach((val) => {
       if (!Object.keys(schema.properties).includes(val)) {
         throw new SchemaError(`required key ${val} does not exist in properties.`)
+      }
+      // set minlength of string property to 1 if its in the required array
+      if (schema.properties[val].type === 'string') {
+        schema.properties[val].minLength = schema.properties[val].minLength | 1
       }
     })
 
