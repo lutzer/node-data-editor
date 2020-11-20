@@ -56,6 +56,20 @@ DataEditor.start({
 }).then((server) => { console.log('Editor is available on localhost:3000') })
 ```
 
+#### Authentification
+Adding a credential object to the editor will password protect its data and editing functions
+```javascript
+DataEditor.start({
+  models: [...],
+  port: 3000,
+  credentials: {
+    login: 'admin',
+    password: 'password'
+  }
+}).then()
+```
+
+
 ### Schema Description
 The Schma definitions follow [JSON Schema](https://json-schema.org/). It needs to contain a primaryKey property of type string, itentified by the 'primaryKey' field. The Editor currently does not support nested properties, just the base Datatypes. It will validate nested properties though.
 
