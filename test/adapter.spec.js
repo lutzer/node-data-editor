@@ -8,7 +8,8 @@ const fs = require('fs').promises;
 const expect = chai.expect
 chai.use(chaiAsPromised)
 
-const { RestAdapter, MemoryAdapter, FileAdapter, AdapterError } = require('./../dist/index');
+const { RestAdapter, MemoryAdapter, AdapterError } = require('./../dist/index');
+const { FileAdapter } = require('./../dist/adapters/fileadapter');
 const { fstat } = require('fs');
 
 describe('RestAdapter Tests', () => {

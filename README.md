@@ -21,44 +21,44 @@ const DataEditor = require('node-data-editor')
 ### Basic example
 
 ```javascript
-  import * as DataEditor from 'node-data-editor'
+import * as DataEditor from 'node-data-editor'
 
-  DataEditor.start({
-    models: [new DataEditor.DataModel({
-      schema: {
-        $id: 'Persons',
-        properties: {
-          id: { type: 'string' },
-          name: { type: 'string' }
-          siblings: { type: 'array' },
-          married: { type: 'boolean' },
-          age: { type: 'number', default: 0 }
-        },
-        primaryKey: 'id',
-        required: ['id']
+DataEditor.start({
+  models: [new DataEditor.DataModel({
+    schema: {
+      $id: 'Persons',
+      properties: {
+        id: { type: 'string' },
+        name: { type: 'string' },
+        siblings: { type: 'array' },
+        married: { type: 'boolean' },
+        age: { type: 'number', default: 0 }
       },
-      adapter: new DataEditor.MemoryAdapter([], 'id')
-    })],
-    port: 3000
-  }).then( (server) => { console.log('Editor is available on localhost:3000')})
+      primaryKey: 'id',
+      required: ['id']
+    },
+    adapter: new DataEditor.MemoryAdapter([], 'id')
+  })],
+  port: 3000
+}).then( (server) => { console.log('Editor is available on localhost:3000')})
 ```
 
 ### Schema Description
 The Schma definitions follow [JSON Schema](https://json-schema.org/). It needs to contain a primaryKey property of type string, itentified by the 'primaryKey' field. The Editor currently does not support nested properties, just the base Datatypes. It will validate nested properties though.
 
 ```typescript
-  // type DataType = 'string' | 'number' | 'boolean' | 'object' | 'array' | 'null'
-  {
-    $id: string,
-    properties: { [key : string] : {
-      type : DataType
-      default? : any
-    }}
-    primaryKey: string,
-    required? : string[],
-    titleTemplate? : string,
-    links? : { model : string, key : string, foreignKey : string }[]
-  }
+// type DataType = 'string' | 'number' | 'boolean' | 'object' | 'array' | 'null'
+{
+  $id: string,
+  properties: { [key : string] : {
+    type : DataType
+    default? : any
+  }}
+  primaryKey: string,
+  required? : string[],
+  titleTemplate? : string,
+  links? : { model : string, key : string, foreignKey : string }[]
+}
 ```
 
 
@@ -131,45 +131,38 @@ The connection to a dataset/database works through the Adapter Interface. There 
 #### RestAdapter
 
 ```javascript
-  // connects to a standard REST api, using these endpoints: GET '/', GET '/:id', PUT '/:id', POST '/', DELETE '/:id'. The Options object is passed to the axios http calls.
-  const adapter = new RestAdapter(apiAddress, options)
-```
-
-#### FileAdapter
-
-```javascript
-  // writes data to a file, first argument is the filepath, second the primaryKey, the third is an array with inital data, if the file does not exist.
-  const adapter = new FileAdapter('data.json', 'id', [{ id: '1' }])
+// connects to a standard REST api, using these endpoints: GET '/', GET '/:id', PUT '/:id', POST '/', DELETE '/:id'. The Options object is passed to the axios http calls.
+const adapter = new RestAdapter(apiAddress, options)
 ```
 
 #### MemoryAdapter
 
 ```javascript
-  // saves data in an simple array. does not persist data. first argument is the initial data array, second argument is the primary Key of the entries.
-  const adapter = new MemoryAdapter([], 'id')
+// saves data in an simple array. does not persist data. first argument is the initial data array, second argument is the primary Key of the entries.
+const adapter = new MemoryAdapter([], 'id')
 ```
 
 #### Custom Adapter
 The custom adapter needs to implement 5 Methods. See [src/adapter.ts](src/adapter.ts) MemoryAdapter or RestAdapter for example implementations. 'id' is the defined primaryKey of the schema.
 
 ```javascript
-  class CustomAdapter implements DataEditor.Adapter {
-    list(): Promise<object[]> {
-      // list all data entries of this resource
-    }
-    read(id: string): Promise<object|undefined> {
-      // list one entry with the specified id
-    }
-    update(id: string, data: any): Promise<void> {
-      // updates a single entry, specified by id
-    }
-    delete(id: string): Promise<void> {
-      // deletes the specified entry
-    }
-    create(data: any): Promise<object> {
-      // creates a new entry
-    }
+class CustomAdapter implements DataEditor.Adapter {
+  list(): Promise<any[]> {
+    // list all data entries of this resource
   }
+  read(id: string): Promise<any|undefined> {
+    // list one entry with the specified id
+  }
+  update(id: string, data: any): Promise<void> {
+    // updates a single entry, specified by id
+  }
+  delete(id: string): Promise<void> {
+    // deletes the specified entry
+  }
+  create(data: any): Promise<any> {
+    // creates a new entry
+  }
+}
 ```
 
 # Development
