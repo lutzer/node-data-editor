@@ -5,28 +5,8 @@ import { AppContext } from './server'
 import bodyParser from 'koa-body'
 import { config } from './config'
 import { checkBasicAuth } from './utils'
-import { DataEntry, DataModel, DataModelLink } from './model'
-import { DataSchema } from './schema'
-
-type Credentials = {
-  login: string
-  password: string
-}
-
-type ModelListResponse = {
-  schema: DataSchema,
-  entries: DataEntry[]
-}
-
-type ModelEntryResponse = {
-  schema: DataSchema,
-  links: DataModelLink[]
-  entry?: DataEntry,
-}
-
-type SchemaResponse = {
-  schemas: DataSchema[]
-}
+import { DataModel } from './model'
+import { ModelEntryResponse, ModelListResponse, SchemaResponse } from './types'
 
 const authMiddleware = async function(basectx: Koa.DefaultContext, next : Koa.Next) {
   const context : AppContext = <AppContext>basectx
@@ -127,4 +107,3 @@ apiRouter.put('/:model/:id', bodyParser(), async (basectx : Koa.DefaultContext) 
 })
 
 export { apiRouter }
-export type { ModelListResponse, ModelEntryResponse, SchemaResponse, Credentials }

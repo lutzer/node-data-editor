@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Switch, Route, useHistory, Redirect } from "react-router-dom";
-import { Api, ApiException, Credentials, DataSchema } from '../api';
+import { Api, ApiException, Credentials, DataSchema, ModelEntryResponse } from '../api';
 import { EditEntryView } from './EditEntryView';
 import { ModelList } from './ModelList';
 import { ModelView } from './ModelView';
@@ -8,7 +8,6 @@ import { ModalOverlay, ModalProperties } from './ModalOverlay';
 import { LoginView } from './LoginView';
 import './styles/App.scss';
 import { CreateEntryView } from './CreateEntryView';
-import { ModelEntryResponse } from '../../../src/router';
 
 type AppContextType = {
   credentials : Credentials,

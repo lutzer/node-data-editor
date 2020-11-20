@@ -1,9 +1,10 @@
 import { Server } from 'http'
 import Koa from 'koa'
 import { DataModel } from './model'
-import { apiRouter, Credentials } from './router'
+import { apiRouter } from './router'
 import serve from 'koa-static'
 import { config } from './config'
+import { Credentials } from './types'
 
 interface AppContext extends Koa.DefaultContext {
   models : DataModel[]

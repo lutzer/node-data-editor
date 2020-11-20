@@ -1,8 +1,6 @@
 import base64 from 'base-64'
 import { config } from './config'
-import { DataSchema, DataSchemaProperty } from './../../src/schema'
-import { ModelListResponse, ModelEntryResponse, SchemaResponse, Credentials } from './../../src/router'
-import { DataEntry, DataModelLink } from '../../src/model'
+import { DataSchema, DataSchemaProperty, ModelListResponse, ModelEntryResponse, SchemaResponse, Credentials, DataEntry, DataModelLink } from './../../src/types'
 
 class ApiException extends Error {
 
@@ -112,4 +110,4 @@ function getCredentials() : Credentials {
 }
 
 export { Api, ApiException, setCredentials, getCredentials }
-export type { DataSchema, DataSchemaProperty, Credentials, DataEntry, DataModelLink }
+export type { DataSchema, DataSchemaProperty, Credentials, DataEntry, DataModelLink, ModelEntryResponse, ModelListResponse }

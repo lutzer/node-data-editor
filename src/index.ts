@@ -1,7 +1,7 @@
 import { MemoryAdapter, RestAdapter, Adapter, FileAdapter } from './adapter'
-import { DataSchema, DataType } from './schema'
 import { DataModel } from './model'
 import { start } from './server'
+import { DataSchema } from './types'
 
 export { start, DataModel, MemoryAdapter, RestAdapter, FileAdapter, Adapter }
-export type { DataSchema, DataType }
+export type { DataSchema }

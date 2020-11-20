@@ -1,8 +1,7 @@
 import _ from 'lodash';
 import React, { useEffect, useState, useContext} from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
-import { ModelListResponse } from '../../../src/router';
-import { Api, DataSchema } from '../api';
+import { Api, ModelListResponse } from '../api';
 import { AppContext } from './App';
 import { HeaderView } from './HeaderView';
 import './styles/ModelView.scss'

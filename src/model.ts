@@ -1,19 +1,9 @@
 import _ from 'lodash'
 import { Adapter } from './adapter'
-import { DataSchema, Validator } from './schema'
+import { Validator } from './schema'
+import { DataEntry, DataModelLink, DataSchema } from './types'
 
 class ModelError extends Error {}
-
-type DataModelLink = {
-  model: string
-  entries: { key?: string, title?: string }[]
-}
-
-type DataEntry = {
-  data: any,
-  $title?: string,
-  $key?: string
-}
 
 function getTitle(entry: any, schema: DataSchema) : string {
   if (_.has(schema, 'titleTemplate')) {

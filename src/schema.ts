@@ -1,24 +1,6 @@
 import _ from 'lodash'
 import Ajv from 'ajv'
-
-type DataType = 'string' | 'number' | 'boolean' | 'object' | 'array' | 'null'
-
-type DataSchemaProperty = {
-  type : DataType|DataType[]
-  default? : any
-  [x: string] : any
-}
-
-type DataSchema = {
-  $id: string
-  type? : string
-  additionalProperties? : boolean
-  properties: { [key : string] : DataSchemaProperty }
-  primaryKey: string
-  required? : string[]
-  links? : { model : string, key : string, foreignKey : string }[]
-  titleTemplate? : string
-}
+import { DataSchema } from './types'
 
 class SchemaError extends Error {}
 
@@ -82,4 +64,3 @@ class Validator {
 }
 
 export { Validator, ValidationError, SchemaError }
-export type { DataSchema, DataSchemaProperty, DataType }
