@@ -3,6 +3,8 @@ A customizable data editor for node, using JSON schema. By using custom Data Ada
 
 ![interface](docs/interface.png)
 
+Demo: [https://repl.it/@lutzer/Node-Data-Editor-Example](https://repl.it/@lutzer/Node-Data-Editor-Example)
+
 ## Install
 ```
 npm install node-data-editor
@@ -21,26 +23,37 @@ const DataEditor = require('node-data-editor')
 ### Basic example
 
 ```javascript
-import * as DataEditor from 'node-data-editor'
+const DataEditor = require('node-data-editor')
+
+const initialData = [
+  {
+    id: '1',
+    name: 'Peter',
+    age: 20,
+    siblings: ['Maria', 'Lea']
+  }
+]
 
 DataEditor.start({
   models: [new DataEditor.DataModel({
     schema: {
       $id: 'Persons',
       properties: {
-        id: { type: 'string' },
-        name: { type: 'string' },
+        id: { type: 'string', minLength: 1 },
+        name: { type: 'string', minLength: 3 },
+        address: { type: 'string', maxLength: 256 },
         siblings: { type: 'array' },
-        married: { type: 'boolean' },
+        married: { type: 'boolean', default: false },
         age: { type: 'number', default: 0 }
       },
       primaryKey: 'id',
-      required: ['id']
+      required: ['id'],
+      titleTemplate: '<%= name %>:<%= age %>'
     },
-    adapter: new DataEditor.MemoryAdapter([], 'id')
+    adapter: new DataEditor.MemoryAdapter(initialData, 'id')
   })],
   port: 3000
-}).then( (server) => { console.log('Editor is available on localhost:3000')})
+}).then((server) => { console.log('Editor is available on localhost:3000') })
 ```
 
 ### Schema Description
