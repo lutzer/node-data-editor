@@ -107,7 +107,7 @@ describe('DataModel Links', () => {
     expect(links[0].entries).to.be.lengthOf(0)
   });
 
-  it.only('should set key and title of a link', async () => {
+  it('should set key and title of a link', async () => {
     const models = createModels()
     const entry = await models[0].get('1')
     const links = await models[0].getLinks(entry, models)

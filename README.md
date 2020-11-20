@@ -135,10 +135,17 @@ The connection to a dataset/database works through the Adapter Interface. There 
   const adapter = new RestAdapter(apiAddress, options)
 ```
 
+#### FileAdapter
+
+```javascript
+  // writes data to a file, first argument is the filepath, second the primaryKey, the third is an array with inital data, if the file does not exist.
+  const adapter = new FileAdapter('data.json', 'id', [{ id: '1' }])
+```
+
 #### MemoryAdapter
 
 ```javascript
-  // saves data in an array. does not persist data. first argument is the initial data array, second argument is the primary Key of the entries.
+  // saves data in an simple array. does not persist data. first argument is the initial data array, second argument is the primary Key of the entries.
   const adapter = new MemoryAdapter([], 'id')
 ```
 
