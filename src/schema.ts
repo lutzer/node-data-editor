@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import Ajv from 'ajv'
-import { DataSchema, DataType } from './types'
+import { DataSchema } from './types'
 
 class SchemaError extends Error {}
 

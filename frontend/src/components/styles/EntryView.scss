@@ -2,6 +2,10 @@
 
 .entry-view {
 
+  .edit-field.disabled {
+    display: none;
+  }
+
   .empty-entry {
     text-align: center;
     opacity: 1;

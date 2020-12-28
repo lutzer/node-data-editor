@@ -33,7 +33,7 @@ const model2 : { schema: any, data : object[] } = {
   schema: {
     $id: 'bar',
     properties: {
-      id: { type: 'string' },
+      id: { type: 'string', autoIncrement: true },
       text: { type: 'string' },
       number: { type: 'number', maximum: 10, minimum: 0 },
       fooId: { type: 'string' },
@@ -60,7 +60,7 @@ DataEditor.start({
     }),
     new DataEditor.DataModel({
       schema: model2.schema,
-      adapter: new DataEditor.MemoryAdapter(model2.data, model2.schema.primaryKey)
+      adapter: new DataEditor.MemoryAdapter(model2.data, model2.schema.primaryKey, true)
     })
   ],
   port: port

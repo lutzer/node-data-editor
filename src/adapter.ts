@@ -1,6 +1,7 @@
 import axios, { AxiosRequestConfig } from 'axios'
 import { keyEquals } from './utils'
-import _ from 'lodash'
+import { v4 as uuidv4 } from 'uuid';
+import _, { isEmpty } from 'lodash'
 
 abstract class Adapter {
   abstract async list() : Promise<any[]>
@@ -49,11 +50,13 @@ class RestAdapter extends Adapter {
 class MemoryAdapter extends Adapter {
   data : any[]
   key : string
+  autoIncrement: boolean
 
-  constructor(data : any[], primaryKey : string = 'id') {
+  constructor(data : any[], primaryKey : string = 'id', autoIncrement : boolean = false) {
     super()
     this.data = _.cloneDeep(data)
     this.key = primaryKey
+    this.autoIncrement = autoIncrement
   }
 
   async list() : Promise<any[]> {
@@ -75,12 +78,15 @@ class MemoryAdapter extends Adapter {
     this.data = this.data.filter((ele : any) => !keyEquals(ele[this.key], id))
   }
 
-  async create(data: object) : Promise<object> {
+  async create(data: any) : Promise<any> {
+    if (this.autoIncrement) {
+      data[this.key] = uuidv4()
+    }
     this.data.push(data)
     return _.cloneDeep(data)
   }
 
-  async update(id : string, data : object) {
+  async update(id : string, data : any) {
     this.data = this.data.map((ele : any) => keyEquals(ele[this.key], id) ? data : ele)
   }
 }

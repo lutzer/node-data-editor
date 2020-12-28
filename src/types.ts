@@ -14,6 +14,7 @@ type DataType = 'string' | 'number' | 'boolean' | 'object' | 'array' | 'null'
 type DataSchemaProperty = {
   type : DataType|DataType[]
   default? : any
+  autoIncrement? : boolean
   [x: string] : any
 }
 

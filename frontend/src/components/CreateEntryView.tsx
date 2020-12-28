@@ -62,7 +62,7 @@ const CreateEntryView = ({ onNewEntry } : { onNewEntry : (res: ModelEntryRespons
         Object.entries(schema.properties).map( ([key, val],i) => {
           return (
             <div key={i}>
-              { renderSchemaField({key: key, property: val, value: val.default, onChange : onDataChange}) }
+              { renderSchemaField({key: key, property: val, value: val.default, onChange : onDataChange, newEntry : true}) }
             </div>
           )
         })

@@ -8,14 +8,20 @@ import { BooleanEditView, JsonEditorView, NumberEditView, TextEditView } from '.
 import { HeaderView } from './HeaderView'
 import './styles/EntryView.scss'
 
-
-function renderSchemaField( { key, property, value, onChange } : 
-  {key : string, property : DataSchemaProperty, value? : any, onChange : (key : string, val: any) => void}) 
+function renderSchemaField( { key, property, value, onChange, newEntry = false } : {
+  key : string, property : DataSchemaProperty, 
+  value? : any, 
+  onChange : (key : string, val: any) => void,
+  newEntry? : boolean
+}) 
 {
+  // disable field if it will get auto incremented
+  const disabled = property.autoIncrement && newEntry ? ' disabled' : ''
+
   const propertyType = _.isArray(property.type) ? property.type[0] : property.type
   if (propertyType === 'string')
     return(
-      <div className='edit-field'>
+      <div className={'edit-field' + disabled}>
         <TextEditView 
           value={value || ''} 
           label={key} 
@@ -25,7 +31,7 @@ function renderSchemaField( { key, property, value, onChange } :
     ) 
   else if (propertyType === 'boolean')
     return(
-      <div className='edit-field'>
+      <div className={'edit-field' + disabled}>
         <BooleanEditView 
           label={key} value={value || false} 
           onChange={(v)=> onChange(key,v)}/>
@@ -33,7 +39,7 @@ function renderSchemaField( { key, property, value, onChange } :
     )
   else if (propertyType === 'number')
     return(
-      <div className='edit-field'>
+      <div className={'edit-field' + disabled}>
         <NumberEditView 
           value={value} 
           min={property.minimum} 
@@ -44,7 +50,7 @@ function renderSchemaField( { key, property, value, onChange } :
     )
   else if (propertyType === 'object')
     return(
-      <div className='edit-field'>
+      <div className={'edit-field' + disabled}>
         <JsonEditorView 
           value={value || {}} 
           label={key} 
@@ -53,7 +59,7 @@ function renderSchemaField( { key, property, value, onChange } :
     )
   else if (propertyType === 'array')
     return(
-      <div className='edit-field'>
+      <div className={'edit-field' + disabled}>
         <JsonEditorView 
           value={value || []} 
           label={key} 
@@ -62,7 +68,7 @@ function renderSchemaField( { key, property, value, onChange } :
     )
   else 
     return(
-      <div className='edit-field'>
+      <div className={'edit-field' + disabled}>
         <p>{JSON.stringify([key, property])}</p>
       </div>
     )
