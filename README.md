@@ -175,19 +175,19 @@ The custom adapter needs to implement 5 Methods. See [src/adapter.ts](src/adapte
 
 ```javascript
 class CustomAdapter implements DataEditor.Adapter {
-  list(): Promise<any[]> {
+  list(schema: DataSchema): Promise<any[]> {
     // list all data entries of this resource
   }
-  read(id: string): Promise<any|undefined> {
+  read(id: string, schema: DataSchema): Promise<any|undefined> {
     // list one entry with the specified id
   }
-  update(id: string, data: any): Promise<void> {
+  update(id: string, data: any, schema: DataSchema): Promise<any> {
     // updates a single entry, specified by id
   }
-  delete(id: string): Promise<void> {
+  delete(id: string, schema: DataSchema): Promise<void> {
     // deletes the specified entry
   }
-  create(data: any): Promise<any> {
+  create(data: any, schema: DataSchema): Promise<any> {
     // creates a new entry
   }
 }

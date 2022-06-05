@@ -53,7 +53,7 @@ apiRouter.get('/:model', async (basectx : Koa.DefaultContext) => {
     const data = await model.list()
     const response : ModelListResponse = { schema: model.schema, entries: data }
     context.body = response
-  } catch (err) {
+  } catch (err: any) {
     context.throw(err instanceof ApiError ? err.statusCode : 400, err.message)
   }
 })
@@ -66,7 +66,7 @@ apiRouter.get('/:model/:id', async (basectx : Koa.DefaultContext) => {
     const links = entry ? await model.getLinks(entry, context.models) : []
     const response : ModelEntryResponse = { schema: model.schema, entry: entry, links: links }
     context.body = response
-  } catch (err) {
+  } catch (err: any) {
     context.throw(err instanceof ApiError ? err.statusCode : 400, err.message)
   }
 })
@@ -77,7 +77,7 @@ apiRouter.delete('/:model/:id', async (basectx : Koa.DefaultContext) => {
     const model = getModel(context.params.model, context)
     await model.delete(context.params.id)
     context.body = {}
-  } catch (err) {
+  } catch (err: any) {
     context.throw(err instanceof ApiError ? err.statusCode : 400, err.message)
   }
 })
@@ -89,7 +89,7 @@ apiRouter.post('/:model/', bodyParser(), async (basectx : Koa.DefaultContext) =>
     const data = await model.create(context.request.body)
     const response : ModelEntryResponse = { schema: model.schema, entry: data, links: [] }
     context.body = response
-  } catch (err) {
+  } catch (err: any) {
     context.throw(err instanceof ApiError ? err.statusCode : 400, err.message)
   }
 })
@@ -101,7 +101,7 @@ apiRouter.put('/:model/:id', bodyParser(), async (basectx : Koa.DefaultContext) 
     const data = await model.update(context.params.id, context.request.body)
     const response : ModelEntryResponse = { schema: model.schema, entry: data, links: [] }
     context.body = response
-  } catch (err) {
+  } catch (err: any) {
     context.throw(err instanceof ApiError ? err.statusCode : 400, err.message)
   }
 })

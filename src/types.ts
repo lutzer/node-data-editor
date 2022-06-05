@@ -15,6 +15,7 @@ type DataSchemaProperty = {
   type : DataType|DataType[]
   default? : any
   autoIncrement? : boolean
+  readonly? : boolean
   [x: string] : any
 }
 

@@ -1,14 +1,15 @@
 import axios, { AxiosRequestConfig } from 'axios'
 import { keyEquals } from './utils'
-import { v4 as uuidv4 } from 'uuid';
-import _, { isEmpty } from 'lodash'
+import { v4 as uuidv4 } from 'uuid'
+import _ from 'lodash'
+import { DataSchema } from './types'
 
 abstract class Adapter {
-  abstract async list() : Promise<any[]>
-  abstract async read(id : string) : Promise<any|undefined>
-  abstract async update(id: string, data : any) : Promise<void>
-  abstract async delete(id : string) : Promise<void>
-  abstract async create(data: any) : Promise<any>
+  abstract list(schema: DataSchema) : Promise<any[]>
+  abstract read(id : string, schema: DataSchema) : Promise<any|undefined>
+  abstract update(id: string, data : any, schema: DataSchema) : Promise<any>
+  abstract delete(id : string, schema: DataSchema) : Promise<void>
+  abstract create(data: any, schema: DataSchema) : Promise<any>
 }
 
 class AdapterError extends Error {}
@@ -33,8 +34,9 @@ class RestAdapter extends Adapter {
     return result.data
   }
 
-  async update(id: string, data: any) {
+  async update(id: string, data: any) : Promise<any> {
     await axios.put(`${this.address}/${id}`, data, this.options)
+    return data
   }
 
   async create(data: any) : Promise<any> {
@@ -86,8 +88,9 @@ class MemoryAdapter extends Adapter {
     return _.cloneDeep(data)
   }
 
-  async update(id : string, data : any) {
+  async update(id : string, data : any) : Promise<any> {
     this.data = this.data.map((ele : any) => keyEquals(ele[this.key], id) ? data : ele)
+    return this.data
   }
 }
 

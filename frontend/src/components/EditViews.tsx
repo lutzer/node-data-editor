@@ -84,8 +84,6 @@ const NumberEditView = ({label, value, min, max, readonly = false, onChange} :
   const [changed, setChanged] = useState(false)
   const [current, setCurrent] = useState(value)
 
-  console.log(readonly, "readonly", label)
-
   useEffect(() => {
     onChange(current)
   },[current]) // eslint-disable-line react-hooks/exhaustive-deps

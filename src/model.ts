@@ -50,17 +50,17 @@ class DataModel {
   }
 
   async list() : Promise<DataEntry[]> {
-    return (await this.adapter.list()).map((e) => addKeyAndTitle(e, this.schema))
+    return (await this.adapter.list(this.schema)).map((e) => addKeyAndTitle(e, this.schema))
   }
 
   async get(id : string) : Promise<DataEntry|undefined> {
-    const data = await this.adapter.read(id)
+    const data = await this.adapter.read(id, this.schema)
     return data ? addKeyAndTitle(data, this.schema) : undefined
   }
 
   async create(data : any) : Promise<DataEntry> {
     data = this.validator.test(data)
-    return addKeyAndTitle(await this.adapter.create(data), this.schema)
+    return addKeyAndTitle(await this.adapter.create(data, this.schema), this.schema)
   }
 
   async update(id : string, data : any) : Promise<DataEntry> {
@@ -70,12 +70,12 @@ class DataModel {
     }
     // merge data
     data = this.validator.test(Object.assign({}, oldEntry.data, data))
-    await this.adapter.update(id, data)
+    await this.adapter.update(id, data, this.schema)
     return addKeyAndTitle(data, this.schema)
   }
 
   async delete(id : string) {
-    await this.adapter.delete(id)
+    await this.adapter.delete(id, this.schema)
   }
 
   async getLinks(entry : DataEntry, models: DataModel[]) : Promise<DataModelLink[]> {
