@@ -21,6 +21,10 @@
     &.invalid {
       background-color: #ff000055;
     }
+
+    input:read-only {
+      opacity: 0.5;
+    }
   }
 
   .error-field {

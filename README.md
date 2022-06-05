@@ -44,7 +44,7 @@ DataEditor.start({
         address: { type: 'string', maxLength: 256 },
         siblings: { type: 'array' },
         married: { type: 'boolean', default: false },
-        age: { type: 'number', default: 0 }
+        age: { type: 'number', default: 0 },
       },
       primaryKey: 'id',
       required: ['id'],
@@ -79,6 +79,7 @@ The Schma definitions follow [JSON Schema](https://json-schema.org/). It needs t
   $id: string,
   properties: { [key : string] : {
     type : DataType
+    readonly? : boolean
     default? : any
   }}
   primaryKey: string,

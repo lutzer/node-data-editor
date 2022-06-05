@@ -25,7 +25,8 @@ function renderSchemaField( { key, property, value, onChange, newEntry = false }
         <TextEditView 
           value={value || ''} 
           label={key} 
-          maxLength={property.maxLength} 
+          maxLength={property.maxLength}
+          readonly={property.readonly}
           onChange={(v)=> onChange(key,v)}/>
       </div>
     ) 
@@ -33,7 +34,9 @@ function renderSchemaField( { key, property, value, onChange, newEntry = false }
     return(
       <div className={'edit-field' + disabled}>
         <BooleanEditView 
-          label={key} value={value || false} 
+          label={key} 
+          value={value || false} 
+          readonly={property.readonly}
           onChange={(v)=> onChange(key,v)}/>
       </div>
     )
@@ -44,7 +47,8 @@ function renderSchemaField( { key, property, value, onChange, newEntry = false }
           value={value} 
           min={property.minimum} 
           max={property.maximum} 
-          label={key} 
+          label={key}
+          readonly={property.readonly}
           onChange={(v)=> onChange(key,v)}/>
       </div>
     )
@@ -53,7 +57,8 @@ function renderSchemaField( { key, property, value, onChange, newEntry = false }
       <div className={'edit-field' + disabled}>
         <JsonEditorView 
           value={value || {}} 
-          label={key} 
+          label={key}
+          readonly={property.readonly}
           onChange={(v)=> onChange(key,v)}/>
       </div>
     )
@@ -62,7 +67,8 @@ function renderSchemaField( { key, property, value, onChange, newEntry = false }
       <div className={'edit-field' + disabled}>
         <JsonEditorView 
           value={value || []} 
-          label={key} 
+          label={key}
+          readonly={property.readonly}
           onChange={(v)=> onChange(key,v)}/>
       </div>
     )

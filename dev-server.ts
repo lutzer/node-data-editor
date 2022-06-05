@@ -12,6 +12,7 @@ const model1 : { schema: DataEditor.DataSchema, data : object[] } = {
       text: { type: 'string', default: 'text' },
       longtext: { type: 'string', default: 'text', maxLength: 512 },
       number: { type: 'number', default: 0 },
+      nw: { type: 'number', default: 0, readonly: true },
       boolean: { type: 'boolean', default: false },
       array: { type: 'array', default: [1, 2, 3] },
       object: { type: 'object' }
@@ -22,10 +23,10 @@ const model1 : { schema: DataEditor.DataSchema, data : object[] } = {
     links: [{ model: 'bar', key: 'id', foreignKey: 'fooId' }]
   },
   data: [
-    { id: '0', text: 'lorem', number: 42, boolean: true, array: [1, 2, 3], object: { x: 5 } },
-    { id: '1', text: 'lorem ipsum', number: 43, boolean: false, array: [4, 5, 6], object: { x: 10 } },
-    { id: '2', text: 'lorem ipsum', number: 43, boolean: false, array: [4, 5, 6], object: { x: 10 } },
-    { id: '3', text: 'lorem ipsum', number: 43, boolean: false, array: [4, 5, 6], object: { x: 10 } }
+    { id: '0', text: 'lorem', number: 42, nw: 10, boolean: true, array: [1, 2, 3], object: { x: 5 } },
+    { id: '1', text: 'lorem ipsum', number: 43, nw: 11, boolean: false, array: [4, 5, 6], object: { x: 10 } },
+    { id: '2', text: 'lorem ipsum', number: 43, nw: 12, boolean: false, array: [4, 5, 6], object: { x: 10 } },
+    { id: '3', text: 'lorem ipsum', number: 43, nw: 13, boolean: false, array: [4, 5, 6], object: { x: 10 } }
   ]
 }
 
